@@ -22,20 +22,32 @@ class _MainScreenState extends State<MainScreen> {
         action: ui.isLogined?null:LoginButton(context)),
       body: Center(
         child: Container(
-          margin: EdgeInsets.all(30),
           padding: EdgeInsets.all(20),
           height: double.infinity,
           width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.height)*1.5,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
           child:Expanded(
             child: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<1?
               Column(
-
+                children: [
+                  Container(
+                    height: (MediaQuery.of(context).size.height)*0.5,
+                    child: FirstColumn(context),
+                  ),
+                  Container(
+                    height: (MediaQuery.of(context).size.height)*0.5,
+                    child: SecondColumn(context),
+                  ),
+                ],
               ):Row(
-
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: FirstColumn(context),),
+                SizedBox(width: 20,),
+                Flexible(
+                  flex: 1,
+                  child: SecondColumn(context),)
+              ],
             )
           ),
         ),
@@ -57,12 +69,54 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget FirstColumn(BuildContext context)=>Container(
     child: Column(
-
+      children: [
+        Expanded(child:
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+            ),
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                textStyle: TextStyle(fontSize: 20),
+                padding: EdgeInsets.symmetric(vertical: 20),
+                elevation: 0,
+                shadowColor: Color(0xffffff),
+              ),
+              onPressed: (){
+              }, child: Text('회원가입')),
+        ),
+      ],
     ),
   );
   Widget SecondColumn(BuildContext context)=>Container(
     child: Column(
-
+      children: [
+        Expanded(child:
+        Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
+        ),
+        ),
+        Container(
+          width: double.infinity,
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                textStyle: TextStyle(fontSize: 20),
+                padding: EdgeInsets.all(20),
+                elevation: 0,
+                shadowColor: Color(0xffffff),
+              ),
+              onPressed: (){
+              }, child: Text('회원가입')),
+        ),
+      ],
     ),
   );
 }

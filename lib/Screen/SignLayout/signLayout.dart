@@ -16,13 +16,15 @@ class _SignLayoutState extends State<SignLayout> {
         child: Container(
           margin: EdgeInsets.all(30),
           padding: EdgeInsets.all(20),
-          height: double.infinity,
+          //height: double.infinity,
           width: (MediaQuery.of(context).size.height)/(MediaQuery.of(context).size.width)>1 ? (MediaQuery.of(context).size.width)*0.9 : 500,
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
-          child: widget.child,
+          child: SingleChildScrollView(
+            child: widget.child,
+          )
         )
       ),
     );
