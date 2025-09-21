@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wish/Model/User/signUp.dart';
 import 'package:wish/Screen/SignLayout/signLayout.dart';
 
+import '../../Model/message.dart';
 import '../../Provider/UIProvider.dart';
+import '../../Service.dart';
 import '../Widget/customTextField.dart';
 
 class SignInPage extends StatefulWidget {
@@ -18,6 +21,9 @@ class _SignInPageState extends State<SignInPage> {
   String password = '';
   TextEditingController idController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController affiliationController = TextEditingController();
 
   @override
   void initState() {
@@ -29,11 +35,15 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     UIProvider ui=Provider.of<UIProvider>(context);
+    SignUp user = SignUp();
 
     @override
     void dispose() {
       idController.dispose();
       passwordController.dispose();
+      nameController.dispose();
+      phoneController.dispose();
+      affiliationController.dispose();
       super.dispose();
     }
 
@@ -52,32 +62,27 @@ class _SignInPageState extends State<SignInPage> {
             ),)),
           CustomTextField(title: 'ID', textController: idController,
             onChnaged: (val){
-              id=idController.text;
+              user.loginId=idController.text;
             },
           ),
           CustomTextField(title: '비밀번호', textController: passwordController,
             onChnaged: (val){
-              password=passwordController.text;
+              user.password=passwordController.text;
             },
           ),
-          CustomTextField(title: '비밀번호 확인', textController: passwordController,
+          CustomTextField(title: '성명', textController: nameController,
             onChnaged: (val){
-              password=passwordController.text;
+              user.name=nameController.text;
             },
           ),
-          CustomTextField(title: '성명', textController: passwordController,
+          CustomTextField(title: '전화번호', textController: phoneController,
             onChnaged: (val){
-              password=passwordController.text;
+              user.phone=phoneController.text;
             },
           ),
-          CustomTextField(title: '전화번호', textController: passwordController,
+          CustomTextField(title: '소속', textController: affiliationController,
             onChnaged: (val){
-              password=passwordController.text;
-            },
-          ),
-          CustomTextField(title: '소속', textController: passwordController,
-            onChnaged: (val){
-              password=passwordController.text;
+              user.affiliation=affiliationController.text;
             },
           ),
           SizedBox(height:20),
@@ -90,9 +95,15 @@ class _SignInPageState extends State<SignInPage> {
                   elevation: 0,
                   shadowColor: Color(0xffffff),
                 ),
-                onPressed: (){
-                  print(id);
-                  print(password);
+                onPressed: ()async{
+
+                  var json = await Service().Fetch(user.toJson(), 'put', '/api/auth/sign-up');
+                  try {
+                    var data = Message.fromJson(json);
+                    print(data.code);
+                  } catch(e){
+                    print(e);
+                  }
                 }, child: Text('회원가입')),
           ),
         ],

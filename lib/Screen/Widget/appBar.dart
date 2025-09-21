@@ -4,20 +4,18 @@ import 'package:wish/Provider/UIProvider.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
   String title;
-  Widget? leading;
+  bool pop=true;
   Widget? action;
 
-  CustomAppBar({super.key, required this.title, this.leading, this.action});
+  CustomAppBar({super.key, required this.title, this.pop=true, this.action});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leading: //leading,
-      IconButton(
+      leading: pop ? IconButton(
         onPressed: ()=>Navigator.pop(context),
         icon: Icon(Icons.chevron_left,color: Colors.white, size: kToolbarHeight,),
-        padding: EdgeInsets.zero,
-      ),
+        padding: EdgeInsets.zero,):null,
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

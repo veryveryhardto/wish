@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../Provider/UIProvider.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController textController;
