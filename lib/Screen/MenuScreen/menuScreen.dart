@@ -42,22 +42,21 @@ class _MenuScreenState extends State<MenuScreen> {
                   itemBuilder: (context,index)=>InkWell(
                     onTap: () async {
                       if (index == menu.length - 1) await Logout();
+                      /*
                       else if(index == 0) {
                         if(page.val) Navigator.pushNamed(context, navigation[index][1]);
                         else Navigator.pushNamed(context, navigation[index][0]);
                       } else Navigator.pushNamed(context, navigation[index]);
+
+                       */
                     },
                     child: Container(
                       padding: const EdgeInsets.all(20),
-                      child: Text(menu[index],style: TextStyle(fontSize: double.parse(font.small),),),
+                      child: Text(menu[index]),
                     ),
                   ),
                   separatorBuilder: (context, index) => const Divider(thickness: 1), ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('현재 버전: farmsway_240118',style:TextStyle(fontSize: double.parse(font.ss),color: Colors.black54)),
             ),
           ],
         ),
@@ -72,57 +71,61 @@ class _MenuScreenState extends State<MenuScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: Text('로그아웃',style:TextStyle(fontSize: double.parse(font.medium))),
-              content: Text('로그아웃하시겠습니까?',style:TextStyle(fontSize: double.parse(font.small))),
-              actions: <Widget>[
-                ElevatedButton(
-                  child:Text("로그아웃",style:TextStyle(fontSize: double.parse(font.medium))),
-                  onPressed: () async{
-                    Indicator().show(context);
-                    var accessToken=await MenuPage._token.Read('!!bioline_secure_Access!!');
-                    var refreshToken=await MenuPage._token.Read('!!bioline_secure_Refresh!!');
-                    var msg = Message.fromJson(await API('''{
-                      "accessToken": "$accessToken",
-                      "refreshToken": "$refreshToken"
-                    }''', 'post', '/user/log-out', '',null,mainDevice));
-                    if(msg.code==1) {
-                      await MenuPage._token.Delete({
-                        'accessTokenKey':'!!bioline_secure_Access!!',
-                        'refreshTokenKey':'!!bioline_secure_Refresh!!',
-                        'IDKey':'!!bioline_secure_ID!!',
-                        'passwodrKey':'!!bioline_secure_Password!!'
-                      });
-                      Indicator().dismiss();
-                      await Workmanager().cancelAll();
-                      Navigator.pop(context);
-                      Fluttertoast.showToast(
-                        fontSize: double.parse(font.small),
-                        msg: '로그아웃 되었습니다.',
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
-                      );
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginPage()), (route) => false);
-                    }
-                    else if(msg.code!<1){
-                      Indicator().dismiss();
-                      await Workmanager().cancelAll();
-                      Navigator.pop(context);
-                      Fluttertoast.showToast(
-                        fontSize: double.parse(font.small),
-                        msg: '로그아웃 되었습니다.',
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
-                      );
-                      //timer?.cancel();
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
-                    }
-                  },
-                ),
-                ElevatedButton(
-                  child:Text("취소",style:TextStyle(fontSize: double.parse(font.medium))),
-                  onPressed: ()=> Navigator.pop(context),
-                ),
-              ],
+              title: Text('로그아웃',style:TextStyle(color: Colors.green)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('로그아웃하시겠습니까?'),
+                  SizedBox(height: 30,),
+                  Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 15),),
+                      child: Text("로그아웃"),
+                      onPressed: () async{
+                        /*
+                        Indicator().show(context);
+                        ///로그아웃 시 토큰 및 ID/Password 삭제
+                        var msg = Message.fromJson(await API('', 'post', '/user/log-out', await MenuPage._token.Read('!!bioline_secure_Access!!'),context,mainDevice,code:await MenuPage._token.Read('!!bioline_secure_Refresh!!')));
+                        Indicator().dismiss();
+                        if(msg.code==1) {
+                          await MenuPage._token.Delete({
+                            'accessTokenKey':'!!bioline_secure_Access!!',
+                            'refreshTokenKey':'!!bioline_secure_Refresh!!',
+                            'IDKey':'!!bioline_secure_ID!!',
+                            'passwordKey':'!!bioline_secure_Password!!'
+                          });
+                          await Workmanager().cancelAll();
+                          Navigator.pop(context);
+                          CustomToast('로그아웃 되었습니다.', context);
+                        }
+                        ///코드 안되면 어떡하지...................
+                        else if(msg.code!<1||msg.error!=null){
+                          await Workmanager().cancelAll();
+                          Navigator.pop(context);
+                          CustomToast('로그아웃 되었습니다.', context);
+                          //timer?.cancel();
+                        }
+
+
+                         */
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 10,),
+                  Container(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          side:BorderSide(color: const Color(0xff20AE4D),),
+                          //textStyle: TextStyle(fontSize:double.parse(font.small))
+                      ),
+                      child: Text("취소"),
+                      onPressed: ()=>Navigator.pop(context),
+                    ),
+                  ),
+                ],),
             );
           },
         );

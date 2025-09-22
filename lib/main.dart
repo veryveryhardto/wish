@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish/Provider/UIProvider.dart';
+import 'package:wish/Screen/MenuScreen/menuScreen.dart';
 import 'package:wish/Screen/Note/noteListPage.dart';
 import 'package:wish/Screen/SignLayout/loginPage.dart';
 
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xff50C7E1),
         scaffoldBackgroundColor: Color(0xffF9F9F9),
       ),
-      home: NoteListPage(),
+      home: MenuScreen(),
     );
   }
 }

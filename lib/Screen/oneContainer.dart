@@ -15,7 +15,7 @@ class OneContainer extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Container(
-          padding: EdgeInsets.all(20),
+          margin: EdgeInsets.all(20),
           height: double.infinity,
           width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 : 600,
           decoration: const BoxDecoration(

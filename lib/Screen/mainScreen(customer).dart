@@ -21,8 +21,8 @@ class _MainScreenState extends State<MainScreen> {
     UIProvider ui=Provider.of<UIProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(title: '메인',
-        action: LoginButton(context),
-        pop: false
+          action: LoginButton(context),
+          pop: false
       ),
       body: Center(
         child: Container(
@@ -30,13 +30,13 @@ class _MainScreenState extends State<MainScreen> {
           height: double.infinity,
           width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.height)*1.5,
           child:Expanded(
-            child: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<1?
+              child: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<1?
               ListView(
                 shrinkWrap: true,
                 children: [
                   Container(
-                    height: (MediaQuery.of(context).size.height)*0.43,
-                    child: FirstColumn(context)
+                      height: (MediaQuery.of(context).size.height)*0.43,
+                      child: FirstColumn(context)
                   ),
                   SizedBox(height: 20,),
                   Container(
@@ -45,16 +45,16 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ],
               ):Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: FirstColumn(context),),
-                SizedBox(width: 20,),
-                Flexible(
-                  flex: 1,
-                  child: SecondColumn(context),)
-              ],
-            )
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: FirstColumn(context),),
+                  SizedBox(width: 20,),
+                  Flexible(
+                    flex: 1,
+                    child: SecondColumn(context),)
+                ],
+              )
           ),
         ),
       ),
@@ -70,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage())),
       child: Text('업체용 로그인',style: TextStyle(color: Color(0xff50C7E1),),
-    ),),
+      ),),
   );
 
   Widget FirstColumn(BuildContext context)=>Column(
@@ -81,13 +81,13 @@ class _MainScreenState extends State<MainScreen> {
         child: Text('공지사항',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
       ),
       Expanded(child:///가로형일시 expanded 세로형일시 container로 길이지정
-        Container(
-          margin: EdgeInsets.only(bottom: 10),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
+      Container(
+        margin: EdgeInsets.only(bottom: 10),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
+      ),
       ),
       Container(
         width: double.infinity,
