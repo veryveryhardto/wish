@@ -4,17 +4,17 @@ import 'package:wish/Screen/SignLayout/loginPage.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/listLayout.dart';
 
-import '../Provider/UIProvider.dart';
+import '../Provider/UserProvider.dart';
 import '../Service.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key,});
+class MainScreen_Customer extends StatefulWidget {
+  const MainScreen_Customer({super.key,});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MainScreen_Customer> createState() => _MainScreen_CustomerState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreen_CustomerState extends State<MainScreen_Customer> {
 
   @override
   Widget build(BuildContext context) {

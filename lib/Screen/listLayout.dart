@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
 
-import '../Provider/UIProvider.dart';
+import '../Provider/UserProvider.dart';
 import '../test2.dart';
 import 'SignLayout/loginPage.dart';
 

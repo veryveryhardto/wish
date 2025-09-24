@@ -5,7 +5,8 @@ class CustomTextField extends StatefulWidget {
   final String title;
   final ValueChanged<String>? onChnaged;
   final FormFieldValidator<String>? validator;
-  CustomTextField({super.key, required this.textController, required this.title, this.onChnaged, this.validator});
+  bool? readOnly = false;
+  CustomTextField({super.key, required this.textController, required this.title, this.onChnaged, this.validator, this.readOnly});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -48,6 +49,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           controller: widget.textController,
           onChanged: widget.onChnaged,
           validator: widget.validator,
+          readOnly: widget.readOnly! ? true:false,
         ),
         SizedBox(height: 10,),
       ],

@@ -36,6 +36,8 @@ dependencies:
   syncfusion_flutter_datagrid:
   flutter_secure_storage:
   windows_toast:
+  table_calendar:
+  kpostal:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

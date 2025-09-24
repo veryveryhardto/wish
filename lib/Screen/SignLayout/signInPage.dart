@@ -4,7 +4,7 @@ import 'package:wish/Model/User/signUp.dart';
 import 'package:wish/Screen/SignLayout/signLayout.dart';
 
 import '../../Model/message.dart';
-import '../../Provider/UIProvider.dart';
+import '../../Provider/UserProvider.dart';
 import '../../Service.dart';
 import '../Widget/customTextField.dart';
 

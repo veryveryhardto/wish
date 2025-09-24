@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish/Provider/UIProvider.dart';
+import 'package:wish/Provider/UserProvider.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
   String title;

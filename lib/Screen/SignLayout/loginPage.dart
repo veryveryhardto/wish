@@ -8,7 +8,7 @@ import 'package:wish/Screen/mainScreen.dart';
 import 'package:wish/Service.dart';
 
 import '../../Model/User/retrieve.dart';
-import '../../Provider/UIProvider.dart';
+import '../../Provider/UserProvider.dart';
 import '../Widget/customTextField.dart';
 
 class LoginPage extends StatefulWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wish/Screen/Note/memberListPage.dart';
 
 import '../Widget/appBar.dart';
 import '../Widget/customTextField.dart';
@@ -50,7 +51,8 @@ class _NoteListPageState extends State<NoteListPage> {
                           borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)),
                         )
                     ),
-                    onPressed: (){},
+                    onPressed: ()=>Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => MemberListPage(),),),
                     child: Text('회원 관리',style: TextStyle(fontSize: 20),),),
                 ],
               ),
