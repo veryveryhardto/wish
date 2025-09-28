@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wish/Model/Jobs/jobDetail.dart';
+import 'package:wish/Model/Note/NoteList.dart' as note;
+import 'package:wish/Provider/JobProvider.dart';
+import 'package:wish/Screen/Jobs/addPage_1.dart';
+import 'package:wish/Screen/Jobs/jobDetail_customer.dart';
 import 'package:wish/Screen/SignLayout/loginPage.dart';
+import 'package:wish/Screen/Widget/NoteDialog.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
-import 'package:wish/Screen/listLayout.dart';
+import 'dart:js' as js;
+
+import 'package:wish/Screen/Jobs/listLayout.dart';
 
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
+import 'Widget/Indicator.dart';
+import 'Widget/customToast.dart';
 
 class MainScreen_Customer extends StatefulWidget {
   const MainScreen_Customer({super.key,});
@@ -18,13 +28,14 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
 
   @override
   Widget build(BuildContext context) {
-    UIProvider ui=Provider.of<UIProvider>(context);
+    UserProvider ui=Provider.of<UserProvider>(context);
+    JobProvider job=Provider.of<JobProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(title: '메인',
           action: LoginButton(context),
           pop: false
       ),
-      body: Center(
+      body:  Center(
         child: Container(
           padding: EdgeInsets.all(20),
           height: double.infinity,
@@ -35,13 +46,11 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
                 shrinkWrap: true,
                 children: [
                   Container(
-                      height: (MediaQuery.of(context).size.height)*0.43,
                       child: FirstColumn(context)
                   ),
                   SizedBox(height: 20,),
                   Container(
-                    height: (MediaQuery.of(context).size.height)*0.43,
-                    child: SecondColumn(context),
+                    child: SecondColumn(context,job),
                   ),
                 ],
               ):Row(
@@ -52,7 +61,7 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
                   SizedBox(width: 20,),
                   Flexible(
                     flex: 1,
-                    child: SecondColumn(context),)
+                    child: SecondColumn(context,job),)
                 ],
               )
           ),
@@ -75,44 +84,49 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
 
   Widget FirstColumn(BuildContext context)=>Column(
     crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
     children: [
       Padding(
         padding: EdgeInsets.only(left: 10,bottom: 5),
         child: Text('공지사항',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
       ),
-      Expanded(child:///가로형일시 expanded 세로형일시 container로 길이지정
       Container(
         margin: EdgeInsets.only(bottom: 10),
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-      ),
-      ),
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: 10,
+          padding: const EdgeInsets.all(15),
+          itemBuilder: (context,index)=>InkWell(
+            onTap: ()=>NoteDialog().show(context,created: true,note:note.Data(
+              noticeBody: '내용', noticeTitle: '제목', createdBy: '사람', createdAt: '날짜')
+            ),
+            child: ListTile(
+              title: Text('제목',),
+              trailing: Text('날짜'),
+            ),
+          ),
+        ),
+      )
+    ],
+  );
+  Widget SecondColumn(BuildContext context,JobProvider job)=>Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
       Container(
         width: double.infinity,
         child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              textStyle: TextStyle(fontSize: 20),
-              padding: EdgeInsets.symmetric(vertical: 20),
-              elevation: 0,
-              shadowColor: Color(0xffffff),
-            ),
-            onPressed: (){
-              Service().Fetch('', 'get','/api/auth/me');
-            }, child: Text('회원가입')),
-      ),
-    ],
-  );
-  Widget SecondColumn(BuildContext context)=>Column(
-    children: [
-      Expanded(child:
-      Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.zero, // 버튼 내부 패딩 제거
+            backgroundColor: Colors.transparent, // 배경색 제거
+            shadowColor: Colors.transparent, // 그림자 제거
+          ),
+          onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
+          child: Image.asset('assets/image/ImageButton.png',),
         ),
-      ),
       ),
       Container(
         width: double.infinity,
@@ -124,8 +138,8 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
               elevation: 0,
               shadowColor: Color(0xffffff),
             ),
-            onPressed: (){
-            }, child: Text('시공 신청')),
+            onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => AddPage_1())),
+            child: Text('시공 신청')),
       ),
       Container(
         width: double.infinity,
@@ -136,7 +150,22 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
               elevation: 0,
               shadowColor: Color(0xffffff),
             ),
-            onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => ListLayout())),
+            onPressed: () async{
+              Indicator().show(context);
+              var json = await Service().Fetch('', 'get', '/api/public/jobs/4a79102e-f6c3-481a-9a33-8892c82e6f99?phone=010-3333-2244');
+              try {
+                var data = JobDetail.fromJson(json);
+                if(data.code=='success'){
+                  job.currentJobDetail=data;
+                  Indicator().dismiss();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail_Customer()));
+                }
+              } catch(e){
+                CustomToast('잘못된 접근입니다.', context);
+                Indicator().dismiss();
+                print(e);
+              }
+            },
             child: Text('신청 목록')),
       ),
     ],

@@ -3,12 +3,13 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:wish/Screen/MenuScreen/menuScreen.dart';
+
 import 'package:wish/Screen/Widget/appBar.dart';
-import 'package:wish/Screen/listLayout.dart';
+import 'package:wish/Screen/Jobs/listLayout.dart';
 
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
+import 'MenuScreen/menuScreen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key,});
@@ -23,6 +24,23 @@ class _MainScreenState extends State<MainScreen> {
 
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  final CalendarStyle _customCalendarStyle = const CalendarStyle(
+    // Use `CalendarStyle` to customize the UI
+    outsideDaysVisible: false,
+    markersMaxCount: 1,
+    markerDecoration: BoxDecoration(
+      color: Colors.black,
+      shape: BoxShape.circle,
+    ),
+    todayDecoration: BoxDecoration(
+      color: Colors.black,
+      shape: BoxShape.circle,
+    ),
+    selectedDecoration : const BoxDecoration(
+      color: Color(0xff50C7E1),
+      shape: BoxShape.circle,
+    ),
+  );
 
   @override
   void initState() {
@@ -55,10 +73,11 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UIProvider ui = Provider.of<UIProvider>(context);
+    UserProvider user = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(title: '메인',
-          pop: false
+          pop: false,
+          action: MenuScreenButton(context),
       ),
       body: Center(
         child: Container(
@@ -160,23 +179,7 @@ class _MainScreenState extends State<MainScreen> {
                   titleCentered: true,
                   formatButtonVisible: false
               ),
-              calendarStyle: const CalendarStyle(
-                // Use `CalendarStyle` to customize the UI
-                outsideDaysVisible: false,
-                markersMaxCount: 1,
-                markerDecoration: BoxDecoration(
-                  color: Colors.black,
-                  shape: BoxShape.circle,
-                ),
-                todayDecoration: BoxDecoration(
-                  color: Colors.black,
-                  shape: BoxShape.circle,
-                ),
-                selectedDecoration : const BoxDecoration(
-                  color: Color(0xff50C7E1),
-                  shape: BoxShape.circle,
-                ),
-              ),
+              calendarStyle: _customCalendarStyle,
               onDaySelected: _onDaySelected,
               onPageChanged: (focusedDay) {
                 _focusedDay = focusedDay;

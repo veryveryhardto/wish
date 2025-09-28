@@ -16,13 +16,13 @@ class Service{
 
 
   Future<dynamic> Fetch(var data,String method,String link,[var token,String? device]) async{
-    String url= 'http://wishi.debtolee.pe.kr:22000';
-
+    //String url= 'http://115.68.232.69:22000';
+    String url= 'http://api.wishclean.co.kr:22000';
     _token='Bearer $token';
     _device=device ?? '';
     http.Response response;
     print(token);
-    print(data.runtimeType);
+    print(data);
     print(url+link);
 
     try {
@@ -46,7 +46,7 @@ class Service{
           return false;
       }
     } catch(e){
-      print(e.runtimeType);
+      print(e);
       return e;
     }
     final int statusCode=response.statusCode;

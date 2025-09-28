@@ -1,10 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wish/Provider/JobProvider.dart';
+import 'package:wish/Screen/Jobs/jobDetail_customer.dart';
 import 'package:wish/Screen/SignLayout/loginPage.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
-import 'package:wish/Screen/listLayout.dart';
 
 
 class JobDetail extends StatefulWidget {
@@ -18,9 +19,8 @@ class _JobDetailState extends State<JobDetail> {
 
   @override
   Widget build(BuildContext context) {
-    UIProvider ui=Provider.of<UIProvider>(context);
+    JobProvider job=Provider.of<JobProvider>(context);
     return Scaffold(
-      appBar: CustomAppBar(title: '시공 정보',),
       body: Center(
         child: Container(
           padding: EdgeInsets.all(20),
@@ -60,7 +60,14 @@ class _JobDetailState extends State<JobDetail> {
                   SizedBox(width: 20,),
                   Flexible(
                     flex: 1,
-                    child: SecondColumn(context),)
+                    child: Container(
+                    height: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    child: SecondDetail(context,false),
+                  ),)
                 ],
               )
           ),
@@ -82,7 +89,7 @@ class _JobDetailState extends State<JobDetail> {
       ),),
   );
 
-  Widget FirstDetail(BuildContext context,bool isVertical)=>Column(
+  Widget FirstDetail(BuildContext context,bool isVertical, JobDetail_Customer )=>Column(
     mainAxisSize: isVertical? MainAxisSize.min:MainAxisSize.max,
     mainAxisAlignment: isVertical? MainAxisAlignment.start:MainAxisAlignment.spaceAround,
     children: [

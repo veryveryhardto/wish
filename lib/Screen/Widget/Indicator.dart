@@ -26,7 +26,7 @@ class Indicator {
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-                        child: CircularProgressIndicator(),),
+                        child: CircularProgressIndicator(color: Color(0xff50C7E1),),),
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Text(text),)

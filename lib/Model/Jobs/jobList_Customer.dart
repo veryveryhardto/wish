@@ -1,30 +1,51 @@
-class JobList {
+class JobList_Customer {
   String? code;
-  List<Data>? data;
+  String? message;
+  Data? data;
 
-  JobList({this.code, this.data});
+  JobList_Customer({this.code, this.message, this.data});
 
-  JobList.fromJson(Map<String, dynamic> json) {
+  JobList_Customer.fromJson(Map<String, dynamic> json) {
     code = json['code'];
-    if (json['data'] != null) {
-      data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
-      });
-    }
+    message = json['message'];
+    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['code'] = this.code;
+    data['message'] = this.message;
     if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+      data['data'] = this.data!.toJson();
     }
     return data;
   }
 }
 
 class Data {
+  List<Items>? items;
+
+  Data({this.items});
+
+  Data.fromJson(Map<String, dynamic> json) {
+    if (json['items'] != null) {
+      items = <Items>[];
+      json['items'].forEach((v) {
+        items!.add(new Items.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.items != null) {
+      data['items'] = this.items!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Items {
   String? jobUuid;
   int? jobStatus;
   Null? jobScheduledAt;
@@ -37,7 +58,7 @@ class Data {
   Null? managerName;
   Null? jobManagerUuid;
 
-  Data(
+  Items(
       {this.jobUuid,
         this.jobStatus,
         this.jobScheduledAt,
@@ -50,7 +71,7 @@ class Data {
         this.managerName,
         this.jobManagerUuid});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  Items.fromJson(Map<String, dynamic> json) {
     jobUuid = json['job_uuid'];
     jobStatus = json['job_status'];
     jobScheduledAt = json['job_scheduled_at'];

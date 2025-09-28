@@ -11,6 +11,6 @@ CustomToast(String text, BuildContext context, {String? position}){
         color: Colors.white,
         fontSize: 19,
       ),
-      toastColor: Colors.green
+      toastColor: Color(0xff50C7E1)
   );
 }

@@ -1,14 +1,18 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish/Model/Token.dart';
 import 'package:wish/Model/User/signIn.dart';
 import 'package:wish/Screen/SignLayout/signInPage.dart';
 import 'package:wish/Screen/SignLayout/signLayout.dart';
+import 'package:wish/Screen/Widget/customToast.dart';
 import 'package:wish/Screen/mainScreen.dart';
 import 'package:wish/Service.dart';
 
-import '../../Model/User/retrieve.dart';
 import '../../Provider/UserProvider.dart';
+import '../Widget/Indicator.dart';
 import '../Widget/customTextField.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,10 +24,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  Token token = Token();
+  final _formKey = GlobalKey<FormState>();
 
-  String id = '';
-  String password = '';
   TextEditingController idController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -34,7 +36,6 @@ class _LoginPageState extends State<LoginPage> {
     //textController.addListener(listener);
   }
 
-
   @override
   void dispose() {
     idController.dispose();
@@ -44,10 +45,11 @@ class _LoginPageState extends State<LoginPage> {
   
   @override
   Widget build(BuildContext context) {
-    UIProvider ui=Provider.of<UIProvider>(context);
+    UserProvider user=Provider.of<UserProvider>(context);
 
     return SignLayout(
       child: Form(
+        key: _formKey,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -56,10 +58,16 @@ class _LoginPageState extends State<LoginPage> {
             IconButton(onPressed: ()=>Navigator.pop(context), icon: Icon(Icons.chevron_left,color: Color(0xff50C7E1),size: 50,)),
             Center(child: Image(image: AssetImage('assets/image/logo-banner.png'),width: MediaQuery.of(context).size.width<400?MediaQuery.of(context).size.width*0.8:400,)),
             CustomTextField(title: 'ID', textController: idController,
-              onChnaged: (val)=>id=idController.text,
+              validator: (val){
+                if(val!.length<0) return 'ID를 입력해 주세요';
+                else return null;
+              },
             ),
             CustomTextField(title: '비밀번호', textController: passwordController,
-              onChnaged: (val)=>password=passwordController.text,
+              validator: (val){
+                if(val!.length<0) return '비밀번호를 입력해 주세요.';
+                else return null;
+              },
             ),
             SizedBox(height:20),
             Container(
@@ -72,26 +80,41 @@ class _LoginPageState extends State<LoginPage> {
                   shadowColor: Color(0xffffff),
                 ),
                   onPressed: () async{
-                  Map<String,String> _signIn = {
-                    "loginId" : id,
-                    "password" : password
-                  };
-                  var json = await Service().Fetch(_signIn, 'post', '/api/notices',await token.AccessRead());
-                  try {
-                    if(json is bool){
-        
-                    }
-                    else{
-        
-                    }
-                    token.Write(SignIn.fromJson(json));
-                    //var data = Retrieve.fromJson(json);
-                    //print(data.detail);
 
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
-                  } catch(e){
-                    print(e);
+                  if(_formKey.currentState!.validate()){
+                    Indicator().show(context);
+                    Map<String,String> _signIn = {
+                      "loginId" : idController.text,
+                      "password" : sha256.convert(utf8.encode(passwordController.text)).toString(),
+                    };
+                    var json = await Service().Fetch(_signIn, 'post', '/api/auth/sign-in');
+                    try {
+                      var data = SignIn.fromJson(json);
+                      if(data.code=='success'){
+                        Indicator().dismiss();
+                        /*
+                        if(data.data!.user!.role==0) CustomToast('아직 접근권한이 없습니다. 권한 설정이 완료될 때 까지 기다려주세요.', context);
+                        else{
+                          user.setRoll = data.data!.user!.role!;
+                        await Token().Write(data, sha256.convert(utf8.encode(passwordController.text)).toString());
+                        CustomToast('로그인에 성공했습니다.', context);
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
+                        }
+                        */
+                        user.setRoll = data.data!.user!.role!;
+                        await Token().Write(data, sha256.convert(utf8.encode(passwordController.text)).toString());
+                        CustomToast('로그인에 성공했습니다.', context);
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
+                      }
+                      else CustomToast('아이디나 비밀번호가 다릅니다.', context);
+                      Indicator().dismiss();
+                    } catch(e){
+                      CustomToast('잘못된 접근입니다.', context);
+                      Indicator().dismiss();
+                      print(e);
+                    }
                   }
+
                 }, child: Text('로그인하기')),
             ),
             SizedBox(height: 5,),

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
-  final TextEditingController textController;
+  final TextEditingController? textController;
   final String title;
+  final String? data;
   final ValueChanged<String>? onChnaged;
   final FormFieldValidator<String>? validator;
+  final List<TextInputFormatter>? textInputFormatter;
+  final TextInputType? textInputType;
   bool? readOnly = false;
-  CustomTextField({super.key, required this.textController, required this.title, this.onChnaged, this.validator, this.readOnly});
+  CustomTextField({super.key, this.textController, required this.title, this.onChnaged, this.validator, this.readOnly, this.textInputFormatter, this.textInputType, this.data});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -14,7 +18,7 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
 
-  late TextEditingController controller = widget.textController;
+  late TextEditingController controller = widget.textController??TextEditingController();
 
 
   @override
@@ -45,11 +49,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 )
             ),
           ),
-          obscureText: widget.title == '비밀번호' ? true : false,
+          autovalidateMode: widget.title.contains('비밀번호') ? AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
+          inputFormatters: widget.textInputFormatter,
+          obscureText: widget.title.contains('비밀번호') ? true : false,
           controller: widget.textController,
           onChanged: widget.onChnaged,
           validator: widget.validator,
-          readOnly: widget.readOnly! ? true:false,
+          readOnly: widget.readOnly??false,
+          keyboardType: widget.textInputType,
+          initialValue: widget.data,
         ),
         SizedBox(height: 10,),
       ],

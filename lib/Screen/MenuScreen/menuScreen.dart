@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wish/Screen/MenuScreen/memberPage.dart';
+import 'package:wish/Screen/MenuScreen/validate.dart';
+import 'package:wish/Screen/mainScreen(customer).dart';
 import 'package:wish/Screen/oneContainer.dart';
 
 import '../../Model/Token.dart';
+import '../../Model/message.dart';
+import '../../Provider/UserProvider.dart';
+import '../../Service.dart';
+import '../Widget/Indicator.dart';
 import '../Widget/appBar.dart';
+import '../Widget/customToast.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -13,8 +22,8 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
 
-  static List<String> menu = ['회원 정보 확인/수정','로그아웃'];
-  static List<dynamic> navigation = [["/validation","/userDetail"],"/fontSizeSetting","/logout"];
+  static List<dynamic> menu = ['회원 정보 확인/수정','로그아웃'];
+  static List<dynamic> navigation = [MemberPage()];
 
   Token token = Token();
 
@@ -27,6 +36,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider user = Provider.of<UserProvider>(context);
 
     return Scaffold(
       appBar: CustomAppBar(title: '마이페이지',),
@@ -34,29 +44,31 @@ class _MenuScreenState extends State<MenuScreen> {
         Column(
           children: [
             Container(
-              child: Expanded(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: menu.length,
-                  padding: const EdgeInsets.all(15),
-                  itemBuilder: (context,index)=>InkWell(
-                    onTap: () async {
-                      if (index == menu.length - 1) await Logout();
-                      /*
-                      else if(index == 0) {
-                        if(page.val) Navigator.pushNamed(context, navigation[index][1]);
-                        else Navigator.pushNamed(context, navigation[index][0]);
-                      } else Navigator.pushNamed(context, navigation[index]);
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: menu.length,
+                padding: const EdgeInsets.all(15),
+                itemBuilder: (context,index)=>InkWell(
+                  onTap: () async {
+                    if (index == menu.length - 1) await Logout();
+                    else if(user.isValidtate){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MemberPage()));
+                    }
+                    else Navigator.push(context, MaterialPageRoute(builder: (context) => ValidatePage()));
+                    /*
+                    else if(index == 0) {
+                      if(page.val) Navigator.pushNamed(context, navigation[index][1]);
+                      else Navigator.pushNamed(context, navigation[index][0]);
+                    } else Navigator.pushNamed(context, navigation[index]);
 
-                       */
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      child: Text(menu[index]),
-                    ),
+                     */
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(menu[index]),
                   ),
-                  separatorBuilder: (context, index) => const Divider(thickness: 1), ),
-              ),
+                ),
+                separatorBuilder: (context, index) => const Divider(thickness: 1), ),
             ),
           ],
         ),
@@ -71,7 +83,7 @@ class _MenuScreenState extends State<MenuScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: Text('로그아웃',style:TextStyle(color: Colors.green)),
+              title: Text('로그아웃',style:TextStyle(color: Color(0xff50C7E1),)),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -81,34 +93,28 @@ class _MenuScreenState extends State<MenuScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 15),),
-                      child: Text("로그아웃"),
+                      child: Text("로그아웃",style: TextStyle(fontSize: 20),),
                       onPressed: () async{
-                        /*
                         Indicator().show(context);
-                        ///로그아웃 시 토큰 및 ID/Password 삭제
-                        var msg = Message.fromJson(await API('', 'post', '/user/log-out', await MenuPage._token.Read('!!bioline_secure_Access!!'),context,mainDevice,code:await MenuPage._token.Read('!!bioline_secure_Refresh!!')));
-                        Indicator().dismiss();
-                        if(msg.code==1) {
-                          await MenuPage._token.Delete({
-                            'accessTokenKey':'!!bioline_secure_Access!!',
-                            'refreshTokenKey':'!!bioline_secure_Refresh!!',
-                            'IDKey':'!!bioline_secure_ID!!',
-                            'passwordKey':'!!bioline_secure_Password!!'
-                          });
-                          await Workmanager().cancelAll();
-                          Navigator.pop(context);
-                          CustomToast('로그아웃 되었습니다.', context);
+                        Map<String,String> _logout = {
+                          "refreshToken" : await token.RefreshRead(),
+                        };
+                        var json = await Service().Fetch(_logout, 'post', '/api/auth/logout',await token.AccessRead());
+                        try {
+                          var data = Message.fromJson(json);
+                          if(data.code=='success'){
+                            await Token().Delete();
+                            Indicator().dismiss();
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen_Customer()), (route) => false);
+                            CustomToast('로그아웃 되었습니다.', context);
+                          }
+                          else CustomToast('잘못된 접근입니다.', context);
+                          Indicator().dismiss();
+                        } catch(e){
+                          CustomToast('잘못된 접근입니다.', context);
+                          Indicator().dismiss();
+                          print(e);
                         }
-                        ///코드 안되면 어떡하지...................
-                        else if(msg.code!<1||msg.error!=null){
-                          await Workmanager().cancelAll();
-                          Navigator.pop(context);
-                          CustomToast('로그아웃 되었습니다.', context);
-                          //timer?.cancel();
-                        }
-
-
-                         */
                       },
                     ),
                   ),
@@ -118,10 +124,10 @@ class _MenuScreenState extends State<MenuScreen> {
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 15),
-                          side:BorderSide(color: const Color(0xff20AE4D),),
+                          side:BorderSide(color: const Color(0xff50C7E1),),
                           //textStyle: TextStyle(fontSize:double.parse(font.small))
                       ),
-                      child: Text("취소"),
+                      child: Text("취소",style: TextStyle(fontSize: 20,color: Color(0xff50C7E1),),),
                       onPressed: ()=>Navigator.pop(context),
                     ),
                   ),

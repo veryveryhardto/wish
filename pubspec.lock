@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
+  crypto:
+    dependency: "direct main"
+    description:
+      name: crypto
+      sha256: "1e445881f28f22d6140f181e07737b22f1e099a5e1ff94b0af2f9e4a463f4855"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.6"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -73,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  find_address:
+    dependency: "direct main"
+    description:
+      name: find_address
+      sha256: b734725735caeaf9154518312598e93e33b8b23146396e9d2f74f394a58db807
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -257,7 +273,7 @@ packages:
     source: hosted
     version: "4.1.2"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
@@ -336,6 +352,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.16.0"
+  multi_masked_formatter:
+    dependency: "direct main"
+    description:
+      name: multi_masked_formatter
+      sha256: b32119e2ff28a1e9d047772e91c73b2d688f45d9cd6469e9a6c2d8b30027c96e
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   nested:
     dependency: transitive
     description:
@@ -424,6 +448,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.5+1"
+  regexed_validator:
+    dependency: "direct main"
+    description:
+      name: regexed_validator
+      sha256: "8ecbfc90927820f4fedefb094f357f8e4ba56808d8f0dcf3c6a1a262855a3872"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0+1"
   simple_gesture_detector:
     dependency: transitive
     description:

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wish/Provider/JobProvider.dart';
 import 'package:wish/Provider/UserProvider.dart';
-import 'package:wish/Screen/MenuScreen/menuScreen.dart';
-import 'package:wish/Screen/Note/noteListPage.dart';
-import 'package:wish/Screen/SignLayout/loginPage.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:wish/Screen/Jobs/addPage_2.dart';
+import 'package:wish/Screen/mainScreen(customer).dart';
 
-import 'Model/Note/NoteList.dart';
-import 'Screen/mainScreen.dart';
+void main() async {
 
-void main() {
+  await initializeDateFormatting();
+
   runApp(MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_)=>UIProvider())
+        ChangeNotifierProvider(create: (_)=>UserProvider()),
+        ChangeNotifierProvider(create: (_)=>JobProvider())
       ],
       child: const MyApp()
   ),);
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xff50C7E1),
         scaffoldBackgroundColor: Color(0xffF9F9F9),
       ),
-      home: MainScreen(),
+      home: MainScreen_Customer(),
     );
   }
 }

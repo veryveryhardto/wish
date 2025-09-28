@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:wish/Model/User/retrieve.dart';
 
-class UIProvider with ChangeNotifier{
-  int _isSignPage=0;
-  var _isLogined=false;
+class UserProvider with ChangeNotifier{
+  int _role=0;
+  var _isValidate=false;
+  Retrieve _userData = Retrieve();
 
-
-  get isSignPage => _isSignPage;
-  set setSignPage(int val) {
-    _isSignPage=val;
+  get isValidtate => _isValidate;
+  set setValidate(bool val) {
+    _isValidate=val;
     notifyListeners();
   }
 
-  get isLogined => _isLogined;
-  set setLogined(bool val) {
-    _isLogined=val;
+  get role => _role;
+  set setRoll(int val) {
+    _role=val;
     notifyListeners();
   }
+
+  get userData => _userData.data;
+  set setUserData(Retrieve data){
+    _userData = data;
+    notifyListeners();
+  }
+
 }

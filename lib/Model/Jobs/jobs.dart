@@ -1,7 +1,7 @@
 class Jobs {
   String? applicantName;
   String? phone;
-  Address? address;
+  Address? address = Address();
   String? categoryUuid;
   String? requestNote;
 
@@ -16,7 +16,7 @@ class Jobs {
     applicantName = json['applicantName'];
     phone = json['phone'];
     address =
-    json['address'] != null ? new Address.fromJson(json['address']) : null;
+    json['address'] != null ? new Address.fromJson(json['address']) : Address();
     categoryUuid = json['categoryUuid'];
     requestNote = json['requestNote'];
   }

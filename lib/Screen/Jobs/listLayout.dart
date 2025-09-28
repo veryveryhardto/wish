@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
 
-import '../Provider/UserProvider.dart';
-import '../test2.dart';
-import 'SignLayout/loginPage.dart';
+import '../../Provider/UserProvider.dart';
+import '../../test2.dart';
+import '../SignLayout/loginPage.dart';
 
 class ListLayout extends StatefulWidget {
   const ListLayout({super.key,});
@@ -54,10 +54,11 @@ class _ListLayoutState extends State<ListLayout> {
 
   @override
   Widget build(BuildContext context) {
-    UIProvider ui=Provider.of<UIProvider>(context);
+    UserProvider ui=Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(title: '메인',
-          action: ui.isLogined?null:LoginButton(context)),
+          //action: ui.isLogined?null:LoginButton(context)
+      ),
       body: Center(
         child: Container(
           margin: EdgeInsets.all(30),
@@ -155,7 +156,9 @@ class _ListLayoutState extends State<ListLayout> {
                   rows: List<DataRow>.generate(
                       100,
                           (index) => DataRow(cells: [
-                        DataCell(Text('A' * (10 - index % 10))),
+                        DataCell(Text('A' * (10 - index % 10)),onTap: (){
+
+                        }),
                         DataCell(Text('B' * (10 - (index + 5) % 10))),
                         DataCell(Text('C' * (15 - (index + 5) % 10))),
                         DataCell(Text('D' * (15 - (index + 10) % 10))),

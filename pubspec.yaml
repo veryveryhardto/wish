@@ -38,6 +38,11 @@ dependencies:
   windows_toast:
   table_calendar:
   kpostal:
+  intl:
+  multi_masked_formatter:
+  regexed_validator:
+  crypto:
+  find_address:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -69,6 +74,7 @@ flutter:
   assets:
     - assets/image/logo.png
     - assets/image/logo-banner.png
+    - assets/image/ImageButton.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

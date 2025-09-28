@@ -73,8 +73,8 @@ class _NoteListPageState extends State<NoteListPage> {
                           fit:FlexFit.loose,
                           child: Column(
                             children: [
-                              CustomTextField(textController: _text1, title: _text1.text),
-                              CustomTextField(textController: _text1, title: _text1.text),
+                              CustomTextField(textController: _text1, title: '작성자'),
+                              CustomTextField(textController: _text2, title: '제목'),
                             ],
                           ),
                         ),
@@ -84,22 +84,24 @@ class _NoteListPageState extends State<NoteListPage> {
                           fit:FlexFit.loose,
                           child: Container(
                             width: double.infinity,
-                            height: 150,
+                            height: 161,
                             child: ElevatedButton(
                               onPressed: (){},
                               child: Text('검색'),
                             ),
                           ),
                         ),
+                        SizedBox(width: 10,),
                         Flexible(
                           flex: 2,
                           fit:FlexFit.loose,
                           child: Container(
                             width: double.infinity,
-                            height: 150,
+                            height: 161,
                             child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: (){},
-                              child: Text('글 작성'),
+                              child: Text('글 작성',overflow: TextOverflow.fade,),
                             ),
                           ),
                         ),

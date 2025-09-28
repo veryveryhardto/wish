@@ -20,7 +20,7 @@ class _MemberListPageState extends State<MemberListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: '게시물 관리',),
+      appBar: CustomAppBar(title: '회원 관리',),
       body: Center(
         child: Container(
           margin: EdgeInsets.all(30),
@@ -73,8 +73,8 @@ class _MemberListPageState extends State<MemberListPage> {
                           fit:FlexFit.loose,
                           child: Column(
                             children: [
-                              CustomTextField(textController: _text1, title: _text1.text),
-                              CustomTextField(textController: _text1, title: _text1.text),
+                              CustomTextField(textController: _text1, title: '등급'),
+                              CustomTextField(textController: _text1, title: '성명'),
                             ],
                           ),
                         ),
@@ -84,7 +84,7 @@ class _MemberListPageState extends State<MemberListPage> {
                           fit:FlexFit.loose,
                           child: Container(
                             width: double.infinity,
-                            height: 150,
+                            height: 161,
                             child: ElevatedButton(
                               onPressed: (){},
                               child: Text('검색'),

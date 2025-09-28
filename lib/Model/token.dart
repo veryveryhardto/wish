@@ -13,10 +13,12 @@ class Token {
     'accessTokenKey': 'secure_Access',
     'refreshTokenKey': 'secure_Refresh',
     'IDKey': 'secure_ID',
+    'passwordKey': 'secure_password'
   };
 
-  Write(SignIn data) async {
+  Write(SignIn data,[String? password]) async {
     if(data==null||data.code=='failed') return 'failed';
+    if(password!=null) await _tokenStorage.write(key: _key['passwordKey']!, value: password);
     await _tokenStorage.write(key: _key['accessTokenKey']!, value: data.data?.accessToken);
     await _tokenStorage.write(key: _key['refreshTokenKey']!, value: data.data?.refreshToken);
     return 'success';
@@ -24,10 +26,12 @@ class Token {
 
   Future<dynamic> AccessRead() async => _tokenStorage.read(key: _key['accessTokenKey']!);
   Future<dynamic> RefreshRead() async => _tokenStorage.read(key: _key['refreshTokenKey']!);
+  Future<dynamic> PasswordRead() async => _tokenStorage.read(key: _key['passwordKey']!);
 
   Delete() async {
     await _tokenStorage.delete(key: _key['accessTokenKey']!);
     await _tokenStorage.delete(key: _key['refreshTokenKey']!);
+    await _tokenStorage.delete(key: _key['passwordKey']!);
   }
 
   Future<dynamic> RefreshToken() async {

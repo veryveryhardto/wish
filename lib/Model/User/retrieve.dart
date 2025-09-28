@@ -25,6 +25,15 @@ class Data {
   int? role;
   String? createdAt;
 
+  get roleName {
+    switch(role){
+      case 1: return '현장담당자';
+      case 2: return '본사담당자';
+      case 3: return 'Master';
+      default: return 'error';
+    }
+  }
+
   Data(
       {this.userUuid,
         this.loginId,
