@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish/Model/Jobs/jobDetail.dart';
-import 'package:wish/Model/Note/NoteList.dart' as note;
+import 'package:wish/Model/Note/NoteList.dart' as noteList;
+import 'package:wish/Model/Token.dart';
 import 'package:wish/Provider/JobProvider.dart';
+import 'package:wish/Provider/NoteProvider.dart';
 import 'package:wish/Screen/Jobs/addPage_1.dart';
 import 'package:wish/Screen/Jobs/jobDetail_customer.dart';
 import 'package:wish/Screen/SignLayout/loginPage.dart';
@@ -12,6 +14,7 @@ import 'dart:js' as js;
 
 import 'package:wish/Screen/Jobs/listLayout.dart';
 
+import '../Model/Note/NoteList.dart';
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
 import 'Widget/Indicator.dart';
@@ -27,9 +30,36 @@ class MainScreen_Customer extends StatefulWidget {
 class _MainScreen_CustomerState extends State<MainScreen_Customer> {
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_)=>Notice());
+  }
+
+  Future<void> Notice() async{
+    NoteProvider note=Provider.of<NoteProvider>(context,listen: false);
+
+    var json=await Service().Fetch('', 'get', '/api/notices',);
+    if(json==false) return;
+    else {
+      try {
+        var data = NoteList.fromJson(json);
+        if(data.code=='success'&&data.data!=null&&data.data!.length>0){
+          note.setNoteList=data;
+          note.setNoteData(data,context);
+        }
+        else return;
+      } catch(e){
+      }
+    }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     UserProvider ui=Provider.of<UserProvider>(context);
     JobProvider job=Provider.of<JobProvider>(context);
+    NoteProvider note=Provider.of<NoteProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(title: '메인',
           action: LoginButton(context),
@@ -46,22 +76,29 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
                 shrinkWrap: true,
                 children: [
                   Container(
-                      child: FirstColumn(context)
+                      child: FirstColumn(context,note)
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 10,),
                   Container(
                     child: SecondColumn(context,job),
                   ),
+                  ImageButton(context)
                 ],
               ):Row(
                 children: [
                   Flexible(
                     flex: 1,
-                    child: FirstColumn(context),),
+                    child: FirstColumn(context,note),),
                   SizedBox(width: 20,),
                   Flexible(
                     flex: 1,
-                    child: SecondColumn(context,job),)
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ImageButton(context),
+                        SecondColumn(context,job),
+                      ],
+                    ),)
                 ],
               )
           ),
@@ -69,6 +106,18 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
       ),
     );
   }
+  Widget ImageButton(BuildContext context)=>Container(
+    width: double.infinity,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.zero, // 버튼 내부 패딩 제거
+        backgroundColor: Colors.transparent, // 배경색 제거
+        shadowColor: Colors.transparent, // 그림자 제거
+      ),
+      onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
+      child: Image.asset('assets/image/ImageButton.png',),
+    ),
+  );
   Widget LoginButton(BuildContext context)=>Padding(
     padding: const EdgeInsets.all(10),
     child: ElevatedButton(
@@ -82,8 +131,8 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
       ),),
   );
 
-  Widget FirstColumn(BuildContext context)=>Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
+  Widget FirstColumn(BuildContext context,NoteProvider note)=>Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
     children: [
       Padding(
@@ -93,41 +142,31 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
       Container(
         margin: EdgeInsets.only(bottom: 10),
         decoration: const BoxDecoration(
-          color: Colors.white,
+          //  color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: 10,
-          padding: const EdgeInsets.all(15),
-          itemBuilder: (context,index)=>InkWell(
-            onTap: ()=>NoteDialog().show(context,created: true,note:note.Data(
-              noticeBody: '내용', noticeTitle: '제목', createdBy: '사람', createdAt: '날짜')
-            ),
-            child: ListTile(
-              title: Text('제목',),
-              trailing: Text('날짜'),
-            ),
-          ),
-        ),
+        child: note.noteList.code=='success'&&note.noteList.data!=null&&note.noteList.data!.length>0?
+        PaginatedDataTable(
+          source: note.noteData!,
+          columns: const [
+            DataColumn(label: Text('')),
+            DataColumn(label: Text(''),numeric: true)
+          ],
+          headingRowHeight : 20,
+          rowsPerPage: 10,
+          dataRowMinHeight: 30,
+          dataRowMaxHeight: 30,
+          dividerThickness: 0.0001,
+          showCheckboxColumn: false,
+        ):Center(child: Padding(
+          padding: EdgeInsets.all(20),
+            child: Text('공지가 없습니다.')))
       )
     ],
   );
   Widget SecondColumn(BuildContext context,JobProvider job)=>Column(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Container(
-        width: double.infinity,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.zero, // 버튼 내부 패딩 제거
-            backgroundColor: Colors.transparent, // 배경색 제거
-            shadowColor: Colors.transparent, // 그림자 제거
-          ),
-          onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
-          child: Image.asset('assets/image/ImageButton.png',),
-        ),
-      ),
       Container(
         width: double.infinity,
         margin: EdgeInsets.only(bottom: 5),

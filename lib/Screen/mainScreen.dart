@@ -10,6 +10,7 @@ import 'package:wish/Screen/Jobs/listLayout.dart';
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
 import 'MenuScreen/menuScreen.dart';
+import 'dart:js' as js;
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key,});
@@ -120,7 +121,7 @@ class _MainScreenState extends State<MainScreen> {
                         .of(context)
                         .size
                         .height) * 0.43,
-                    child: SecondColumn(context),
+                    child: SecondColumn(context,user.role),
                   ),
                 ],
               ) : Row(
@@ -131,7 +132,7 @@ class _MainScreenState extends State<MainScreen> {
                   SizedBox(width: 20,),
                   Flexible(
                     flex: 1,
-                    child: SecondColumn(context),)
+                    child: SecondColumn(context,user.role),)
                 ],
               )
           ),
@@ -151,6 +152,18 @@ class _MainScreenState extends State<MainScreen> {
       onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => MenuScreen())),
       child: Text('마이페이지',style: TextStyle(color: Color(0xff50C7E1),),
       ),),
+  );
+  Widget ImageButton(BuildContext context)=>Container(
+    width: double.infinity,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.zero, // 버튼 내부 패딩 제거
+        backgroundColor: Colors.transparent, // 배경색 제거
+        shadowColor: Colors.transparent, // 그림자 제거
+      ),
+      onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
+      child: Image.asset('assets/image/ImageButton.png',),
+    ),
   );
 
   Widget FirstColumn(BuildContext context)=>Column(
@@ -232,7 +245,8 @@ class _MainScreenState extends State<MainScreen> {
 
     ],
   );
-  Widget SecondColumn(BuildContext context)=>Column(
+
+  Widget SecondColumn(BuildContext context,int role)=>Column(
     children: [
       Padding(
         padding: EdgeInsets.only(left: 10,bottom: 5),

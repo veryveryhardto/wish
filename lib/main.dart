@@ -6,6 +6,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:wish/Screen/Jobs/addPage_2.dart';
 import 'package:wish/Screen/mainScreen(customer).dart';
 
+import 'Provider/NoteProvider.dart';
+
 void main() async {
 
   await initializeDateFormatting();
@@ -13,7 +15,8 @@ void main() async {
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_)=>UserProvider()),
-        ChangeNotifierProvider(create: (_)=>JobProvider())
+        ChangeNotifierProvider(create: (_)=>JobProvider()),
+        ChangeNotifierProvider(create: (_)=>NoteProvider())
       ],
       child: const MyApp()
   ),);

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:wish/Model/Note/NoteList.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
+
+import '../../Provider/UserProvider.dart';
 
 class NoteDialog {
   late BuildContext _context;
 
-  show(BuildContext context, {bool created = false, bool modified = false, Data? note}) {
+  show(BuildContext context, {bool modified = false, Data? note}) {
     bool _modify = modified;
     TextEditingController title = TextEditingController(text:modified?'':note!.noticeTitle);
     TextEditingController body = TextEditingController(text:modified?'':note!.noticeBody);
+    UserProvider user =Provider.of<UserProvider>(context,listen: false);
+    ///현재 로그인한 유저 아이디와 작성자 아이디 같을경우 created
 
     return showDialog<void>( context: context, barrierDismissible: false,
         builder: (BuildContext context) {
@@ -70,7 +75,7 @@ class NoteDialog {
                         ),],
                     ):Text(body.text),
                     SizedBox(height: 30,),
-                    created?Container(
+                    user.role==3?Container(
                       width: double.infinity,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(

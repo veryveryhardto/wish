@@ -48,8 +48,8 @@ class Data {
     noticeBody = json['notice_body'];
     isPinned = json['is_pinned'];
     createdBy = json['created_by'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    createdAt = json['created_at'].split('T')[0];
+    updatedAt = json['updated_at'].split('T')[0];
   }
 
   Map<String, dynamic> toJson() {
