@@ -52,6 +52,7 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
                   Container(
                     child: SecondColumn(context,job),
                   ),
+                  ImageButton(context),
                 ],
               ):Row(
                 children: [
@@ -61,7 +62,12 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
                   SizedBox(width: 20,),
                   Flexible(
                     flex: 1,
-                    child: SecondColumn(context,job),)
+                    child: Column(
+                      children: [
+                        ImageButton(context),
+                        SecondColumn(context,job),
+                      ],
+                    ),)
                 ],
               )
           ),
@@ -80,6 +86,18 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
       onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage())),
       child: Text('업체용 로그인',style: TextStyle(color: Color(0xff50C7E1),),
       ),),
+  );
+  Widget ImageButton(BuildContext context)=>Container(
+    width: double.infinity,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.zero,
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+      ),
+      onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
+      child: Image.asset('assets/image/ImageButton.png',),
+    ),
   );
 
   Widget FirstColumn(BuildContext context)=>Column(
@@ -116,18 +134,6 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
   Widget SecondColumn(BuildContext context,JobProvider job)=>Column(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Container(
-        width: double.infinity,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.zero, // 버튼 내부 패딩 제거
-            backgroundColor: Colors.transparent, // 배경색 제거
-            shadowColor: Colors.transparent, // 그림자 제거
-          ),
-          onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
-          child: Image.asset('assets/image/ImageButton.png',),
-        ),
-      ),
       Container(
         width: double.infinity,
         margin: EdgeInsets.only(bottom: 5),

@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'dart:js' as js;
 
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Jobs/listLayout.dart';
@@ -131,7 +132,7 @@ class _MainScreenState extends State<MainScreen> {
                   SizedBox(width: 20,),
                   Flexible(
                     flex: 1,
-                    child: SecondColumn(context),)
+                    child: SecondColumn(context,user.role),)
                 ],
               )
           ),
@@ -232,12 +233,14 @@ class _MainScreenState extends State<MainScreen> {
 
     ],
   );
-  Widget SecondColumn(BuildContext context)=>Column(
+  Widget SecondColumn(BuildContext context,int role)=>Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Padding(
         padding: EdgeInsets.only(left: 10,bottom: 5),
         child: Text('공지사항',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
       ),
+
       Expanded(child:///가로형일시 expanded 세로형일시 container로 길이지정
       Container(
         margin: EdgeInsets.only(bottom: 10),
@@ -247,18 +250,50 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       ),
+      role>2?Row(
+        children: [
+          Flexible(
+            child: Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    textStyle: TextStyle(fontSize: 20),
+                    padding: EdgeInsets.all(20),
+                    elevation: 0,
+                    shadowColor: Color(0xffffff),
+                  ),
+                  onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => ListLayout())),
+                  child: Text('게시글 관리')),
+            ),
+          ),
+          SizedBox(width: role==3?5:0),
+          role==3?Flexible(
+            child: Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    textStyle: TextStyle(fontSize: 20),
+                    padding: EdgeInsets.all(20),
+                    elevation: 0,
+                    shadowColor: Color(0xffffff),
+                  ),
+                  onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => ListLayout())),
+                  child: Text('회원 관리')),
+            ),
+          ),
+        ],
+      ):SizedBox(),
       Container(
         width: double.infinity,
-        child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              textStyle: TextStyle(fontSize: 20),
-              padding: EdgeInsets.symmetric(vertical: 20),
-              elevation: 0,
-              shadowColor: Color(0xffffff),
-            ),
-            onPressed: (){
-              Service().Fetch('', 'get','/api/auth/me');
-            }, child: Text('회원가입')),
+        child: role==3?null:ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.zero, // 버튼 내부 패딩 제거
+            backgroundColor: Colors.transparent, // 배경색 제거
+            shadowColor: Colors.transparent, // 그림자 제거
+          ),
+          onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
+          child: Image.asset('assets/image/ImageButton.png',),
+        ),
       ),
     ],
   );
