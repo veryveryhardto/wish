@@ -10,6 +10,8 @@ import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Jobs/JobList_Customer.dart';
 
 import '../Model/Note/NoteList.dart';
+import '../Model/Token.dart';
+import '../Model/User/memberlist.dart';
 import '../Provider/NoteProvider.dart';
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
@@ -69,6 +71,7 @@ class _MainScreenState extends State<MainScreen> {
         }
         else return;
       } catch(e){
+        print(e);
       }
     }
   }
@@ -307,8 +310,25 @@ class _MainScreenState extends State<MainScreen> {
                   elevation: 0,
                   shadowColor: Color(0xffffff),
                 ),
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => NoteListPage()));
+                onPressed: () async{
+                  NoteProvider note=Provider.of<NoteProvider>(context,listen: false);
+
+                  var json=await Service().Fetch('', 'get', '/api/notices',);
+                  if(json==false) return;
+                  else {
+                    try {
+                      var data = NoteList.fromJson(json);
+                      if(data.code=='success'&&data.data!=null&&data.data!.length>0){
+                        note.setNoteList=data;
+                        note.setNoteData(data,context);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => NoteListPage()));
+                      }
+                      else return;
+                    } catch(e){
+                      print(e);
+                    }
+                  }
+
                 }, child: Text('게시글 관리')),
           ):SizedBox(),
           SizedBox(width: role>2?5:0,),
@@ -320,8 +340,23 @@ class _MainScreenState extends State<MainScreen> {
                   elevation: 0,
                   shadowColor: Color(0xffffff),
                 ),
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MemberListPage()));
+                onPressed: () async {
+                  UserProvider user=Provider.of<UserProvider>(context,listen: false);
+
+                  var json=await Service().Fetch('', 'get', '/api/auth/users',await Token().AccessRead());
+                  if(json==false) return;
+                  else {
+                    try {
+                      var data = MemberList.fromJson(json);
+                      if(data.code=='success'&&data.data!=null&&data.data!.total!>0){
+                        user.memberList=data;
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => MemberListPage()));
+                      }
+                      else return;
+                    } catch(e){
+                      print(e);
+                    }
+                  }
                 }, child: Text('회원 관리')),
           ),
         ],

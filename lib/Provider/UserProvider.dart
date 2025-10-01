@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wish/Model/User/memberlist.dart';
 import 'package:wish/Model/User/retrieve.dart';
 
 class UserProvider with ChangeNotifier{
@@ -6,6 +7,7 @@ class UserProvider with ChangeNotifier{
   String _uuid='';
   var _isValidate=false;
   Retrieve _userData = Retrieve();
+  MemberList memberList = MemberList();
 
   get uuid => _uuid;
   set setUUID(String uuid){
@@ -31,6 +33,10 @@ class UserProvider with ChangeNotifier{
     notifyListeners();
   }
 
+  set setMemberList(MemberList member){
+    memberList = member;
+    notifyListeners();
+  }
 
 
 }

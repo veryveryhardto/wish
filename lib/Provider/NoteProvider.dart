@@ -5,23 +5,22 @@ import '../Model/Note/NoteList.dart';
 import '../Screen/Widget/NoteDialog.dart';
 
 class NoteProvider with ChangeNotifier{
-  NoteList _noteList = NoteList();
+  NoteList noteList = NoteList();
   NoteData? noteData;
 
-  get noteList => _noteList;
-  set setNoteList (NoteList noteList){
+  set setNoteList (NoteList note){
     if(noteList.data!=null){
       List<Data> _pinnedList = [];
       List<Data> _list = [];
       noteList.data!.forEach((e)=>e.isPinned! ? _pinnedList.add(e):_list.add(e));
       noteList.data=_pinnedList+_list;
     }
-    _noteList = noteList;
+    noteList = note;
     notifyListeners();
   }
 
-  setNoteData(NoteList noteList,BuildContext context){
-    noteData = NoteData(context: context)..celldata=noteList.data!;
+  setNoteData(NoteList note,BuildContext context){
+    noteData = NoteData(context: context)..celldata=note.data!;
     notifyListeners();
   }
 }
@@ -46,10 +45,13 @@ class NoteData extends DataTableSource{
     ],onSelectChanged:(selected) {
       if(selected!) SchedulerBinding.instance.addPostFrameCallback((_) {
         NoteDialog().show(context, note:Data(
+          isPinned: celldata[index].isPinned,
+          noticeUuid: celldata[index].noticeUuid,
             noticeBody: celldata[index].noticeBody??'내용',
             noticeTitle: celldata[index].noticeTitle??'제목',
             createdBy: celldata[index].createdBy??'사람',
-            createdAt: celldata[index].createdAt));
+            createdAt: celldata[index].createdAt),
+        );
       });
     });
   }

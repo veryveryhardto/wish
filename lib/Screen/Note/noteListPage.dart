@@ -5,7 +5,11 @@ import 'package:wish/Screen/Note/memberListPage.dart';
 import 'package:wish/Screen/Widget/NoteDialog.dart';
 
 import '../../Model/Note/NoteList.dart';
+import '../../Model/Token.dart';
+import '../../Model/User/memberlist.dart' as member;
 import '../../Provider/NoteProvider.dart';
+import '../../Provider/UserProvider.dart';
+import '../../Service.dart';
 import '../Widget/appBar.dart';
 import '../Widget/customTextField.dart';
 
@@ -27,7 +31,6 @@ class _NoteListPageState extends State<NoteListPage> {
     super.initState();
     NoteProvider note=Provider.of<NoteProvider>(context,listen: false);
     _lastList = NoteList.fromJson(note.noteList.toJson());
-    print('이거 실행되니');
   }
 
   bool _sortAscending = true;
@@ -89,8 +92,24 @@ class _NoteListPageState extends State<NoteListPage> {
                           borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)),
                         )
                     ),
-                    onPressed: ()=>Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => MemberListPage(),),),
+                    onPressed: () async {
+                      UserProvider user=Provider.of<UserProvider>(context,listen: false);
+
+                      var json=await Service().Fetch('', 'get', '/api/auth/users',await Token().AccessRead());
+                      if(json==false) return;
+                      else {
+                        try {
+                          var data = member.MemberList.fromJson(json);
+                          if(data.code=='success'&&data.data!=null&&data.data!.total!>0){
+                            user.memberList=data;
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => MemberListPage(),),);
+                          }
+                          else return;
+                        } catch(e){
+                          print(e);
+                        }
+                      }
+                      },
                     child: Text('회원 관리',style: TextStyle(fontSize: 20),),),
                 ],
               ),
@@ -126,16 +145,19 @@ class _NoteListPageState extends State<NoteListPage> {
                               height: 161,
                               child: ElevatedButton(
                                 onPressed: (){
-                                  setState(() {
-                                    _lastList = note.noteList.data.where((Data e){
-                                      if(_name.text!=''&&_title.text!='') return e.createdBy!.contains(_name.text)&&e.noticeTitle!.contains(_title.text);
-                                      else if(_name.text!='') return e.createdBy!.contains(_name.text);
-                                      else if(_title.text!='') return e.noticeTitle!.contains(_title.text);
-                                      else return e;
+                                  if(_name.text==''&&_title.text=='') print('null');
+                                  else{
+                                    List<Data> _list = note.noteList.data??[];
+                                    setState(() {
+                                      _lastList.data = _list.where(
+                                          _name.text!=''&&_title.text!=''?(e)=>e.createdBy!.contains(_name.text)&&e.noticeTitle!.contains(_title.text):
+                                          _name.text!=''?(e)=>e.createdBy!.contains(_name.text):
+                                          _title.text!=''?(e)=>e.noticeTitle!.contains(_title.text):
+                                              (e)=>true).toList();
+                                      _sortColumnIndex=null;
+                                      _sortAscending=true;
                                     });
-                                    _sortColumnIndex=null;
-                                    _sortAscending=true;
-                                  });
+                                  }
                                 },
                                 child: Text('검색'),
                               ),

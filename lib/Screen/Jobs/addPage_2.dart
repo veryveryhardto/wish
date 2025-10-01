@@ -37,7 +37,7 @@ class _AddPage_2State extends State<AddPage_2> {
     return Scaffold(
       appBar: CustomAppBar(title: '시공 신청하기',),
       body: OneContainer(
-          Container(/*
+          Container(
             child: Form(
               key: _formKey,
               child: Column(
@@ -110,7 +110,6 @@ class _AddPage_2State extends State<AddPage_2> {
                     child: Text('요청사항', style: TextStyle(
                         fontWeight: FontWeight.bold, color: Color(0xff50C7E1)),),),
                   SizedBox(height: 5,),
-                  /*
                   Flexible(
                     child: TextFormField(
                       decoration: InputDecoration(
@@ -133,8 +132,6 @@ class _AddPage_2State extends State<AddPage_2> {
                       maxLines: null,
                     ),
                   ),
-
-                   */
                   SizedBox(height: 30,),
                   Container(
                     width: double.infinity,
@@ -178,7 +175,7 @@ class _AddPage_2State extends State<AddPage_2> {
                         child: Text('뒤로가기',style: TextStyle(fontSize: 20,color: Color(0xff50C7E1))),
                       ))
                 ],),
-            ),*/
+            ),
           )
       ),);
   }

@@ -13,27 +13,23 @@ class Token {
     'accessTokenKey': 'secure_Access',
     'refreshTokenKey': 'secure_Refresh',
     'UUIDKey': 'secure_UUID',
-    'passwordKey': 'secure_password'
   };
 
-  Write(SignIn data,[String? password,String? UUID]) async {
+  Write(SignIn data,[String? UUID]) async {
     if(data==null||data.code=='failed') return 'failed';
-    if(password!=null) await _tokenStorage.write(key: _key['passwordKey']!, value: password);
     if(UUID!=null) await _tokenStorage.write(key: _key['UUIDKey']!, value: UUID);
     await _tokenStorage.write(key: _key['accessTokenKey']!, value: data.data?.accessToken);
     await _tokenStorage.write(key: _key['refreshTokenKey']!, value: data.data?.refreshToken);
     return 'success';
   }
 
-  Future<dynamic> AccessRead() async => _tokenStorage.read(key: _key['accessTokenKey']!);
-  Future<dynamic> RefreshRead() async => _tokenStorage.read(key: _key['refreshTokenKey']!);
-  Future<dynamic> PasswordRead() async => _tokenStorage.read(key: _key['passwordKey']!);
-  Future<dynamic> UUIDRead() async => _tokenStorage.read(key: _key['UUIDKey']!);
+  Future<dynamic> AccessRead() async => await _tokenStorage.read(key: _key['accessTokenKey']!);
+  Future<dynamic> RefreshRead() async => await _tokenStorage.read(key: _key['refreshTokenKey']!);
+  Future<dynamic> UUIDRead() async => await _tokenStorage.read(key: _key['UUIDKey']!);
 
   Delete() async {
     await _tokenStorage.delete(key: _key['accessTokenKey']!);
     await _tokenStorage.delete(key: _key['refreshTokenKey']!);
-    await _tokenStorage.delete(key: _key['passwordKey']!);
     await _tokenStorage.delete(key: _key['UUIDKey']!);
   }
 

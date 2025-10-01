@@ -43,6 +43,7 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
         }
         else return;
       } catch(e){
+        print(e);
       }
     }
   }
