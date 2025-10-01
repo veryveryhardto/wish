@@ -3,10 +3,14 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:wish/Screen/Note/memberListPage.dart';
+import 'package:wish/Screen/Note/noteListPage.dart';
 
 import 'package:wish/Screen/Widget/appBar.dart';
-import 'package:wish/Screen/Jobs/listLayout.dart';
+import 'package:wish/Screen/Jobs/JobList_Customer.dart';
 
+import '../Model/Note/NoteList.dart';
+import '../Provider/NoteProvider.dart';
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
 import 'MenuScreen/menuScreen.dart';
@@ -48,6 +52,25 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    WidgetsBinding.instance.addPostFrameCallback((_)=>Notice());
+  }
+
+  Future<void> Notice() async{
+    NoteProvider note=Provider.of<NoteProvider>(context,listen: false);
+
+    var json=await Service().Fetch('', 'get', '/api/notices',);
+    if(json==false) return;
+    else {
+      try {
+        var data = NoteList.fromJson(json);
+        if(data.code=='success'&&data.data!=null&&data.data!.length>0){
+          note.setNoteList=data;
+          note.setNoteData(data,context);
+        }
+        else return;
+      } catch(e){
+      }
+    }
   }
 
   @override
@@ -75,6 +98,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     UserProvider user = Provider.of<UserProvider>(context);
+    NoteProvider note=Provider.of<NoteProvider>(context);
+
     return Scaffold(
       appBar: CustomAppBar(title: '메인',
           pop: false,
@@ -96,7 +121,7 @@ class _MainScreenState extends State<MainScreen> {
               .width) * 0.9 : (MediaQuery
               .of(context)
               .size
-              .height) * 1.5,
+              .width) * 0.6,
           child: Expanded(
               child: (MediaQuery
                   .of(context)
@@ -109,19 +134,11 @@ class _MainScreenState extends State<MainScreen> {
                 shrinkWrap: true,
                 children: [
                   Container(
-                      height: (MediaQuery
-                          .of(context)
-                          .size
-                          .height) * 0.43,
                       child: FirstColumn(context)
                   ),
                   SizedBox(height: 20,),
                   Container(
-                    height: (MediaQuery
-                        .of(context)
-                        .size
-                        .height) * 0.43,
-                    child: SecondColumn(context,user.role),
+                    child: SecondColumn(context,user.role,note),
                   ),
                 ],
               ) : Row(
@@ -132,7 +149,7 @@ class _MainScreenState extends State<MainScreen> {
                   SizedBox(width: 20,),
                   Flexible(
                     flex: 1,
-                    child: SecondColumn(context,user.role),)
+                    child: SecondColumn(context,user.role,note),)
                 ],
               )
           ),
@@ -167,9 +184,9 @@ class _MainScreenState extends State<MainScreen> {
   );
 
   Widget FirstColumn(BuildContext context)=>Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
     children: [
-      Expanded(child:///가로형일시 expanded 세로형일시 container로 길이지정
       Container(
         margin: EdgeInsets.only(bottom: 10),
         decoration: const BoxDecoration(
@@ -177,6 +194,7 @@ class _MainScreenState extends State<MainScreen> {
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             TableCalendar<Event>(
               locale: 'ko_KR',
@@ -213,7 +231,10 @@ class _MainScreenState extends State<MainScreen> {
                           vertical: 4.0,
                         ),
                         decoration: BoxDecoration(
-                          border: Border.all(),
+                          border: Border.all(
+                            width: 2,
+                            color: Color(0xff50C7E1),
+                          ),
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: ListTile(
@@ -229,7 +250,6 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
       ),
-      ),
       Container(
         width: double.infinity,
         child: ElevatedButton(
@@ -239,41 +259,73 @@ class _MainScreenState extends State<MainScreen> {
               elevation: 0,
               shadowColor: Color(0xffffff),
             ),
-            onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => ListLayout())),
+            onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => JobList_Customer())),
             child: Text('신청 목록')),
       ),
 
     ],
   );
 
-  Widget SecondColumn(BuildContext context,int role)=>Column(
+  Widget SecondColumn(BuildContext context,int role,NoteProvider note)=>Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
     children: [
       Padding(
         padding: EdgeInsets.only(left: 10,bottom: 5),
         child: Text('공지사항',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
       ),
-      Expanded(child:///가로형일시 expanded 세로형일시 container로 길이지정
       Container(
-        margin: EdgeInsets.only(bottom: 10),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-        ),
+          margin: EdgeInsets.only(bottom: 10),
+          decoration: const BoxDecoration(
+            //  color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
+          child: note.noteList.code=='success'&&note.noteList.data!=null&&note.noteList.data!.length>0?
+          PaginatedDataTable(
+            source: note.noteData!,
+            columns: const [
+              DataColumn(label: Text('')),
+              DataColumn(label: Text(''),numeric: true)
+            ],
+            headingRowHeight : 20,
+            rowsPerPage: 5,
+            dataRowMinHeight: 30,
+            dataRowMaxHeight: 30,
+            dividerThickness: 0.0001,
+            showCheckboxColumn: false,
+          ):Center(child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Text('공지가 없습니다.')))
       ),
-      ),
-      Container(
-        width: double.infinity,
-        child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              textStyle: TextStyle(fontSize: 20),
-              padding: EdgeInsets.symmetric(vertical: 20),
-              elevation: 0,
-              shadowColor: Color(0xffffff),
-            ),
-            onPressed: (){
-              Service().Fetch('', 'get','/api/auth/me');
-            }, child: Text('회원가입')),
-      ),
+      role>1?Row(
+        children: [
+          role>2?Expanded(
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  textStyle: TextStyle(fontSize: 20),
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  elevation: 0,
+                  shadowColor: Color(0xffffff),
+                ),
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => NoteListPage()));
+                }, child: Text('게시글 관리')),
+          ):SizedBox(),
+          SizedBox(width: role>2?5:0,),
+          Expanded(
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  textStyle: TextStyle(fontSize: 20),
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  elevation: 0,
+                  shadowColor: Color(0xffffff),
+                ),
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MemberListPage()));
+                }, child: Text('회원 관리')),
+          ),
+        ],
+      ):ImageButton(context),
     ],
   );
 }

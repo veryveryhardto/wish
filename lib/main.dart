@@ -4,6 +4,7 @@ import 'package:wish/Provider/JobProvider.dart';
 import 'package:wish/Provider/UserProvider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:wish/Screen/Jobs/addPage_2.dart';
+import 'package:wish/Screen/Jobs/JobList_Customer.dart';
 import 'package:wish/Screen/mainScreen(customer).dart';
 
 import 'Provider/NoteProvider.dart';

@@ -3,8 +3,15 @@ import 'package:wish/Model/User/retrieve.dart';
 
 class UserProvider with ChangeNotifier{
   int _role=0;
+  String _uuid='';
   var _isValidate=false;
   Retrieve _userData = Retrieve();
+
+  get uuid => _uuid;
+  set setUUID(String uuid){
+    _uuid=uuid;
+    notifyListeners();
+  }
 
   get isValidtate => _isValidate;
   set setValidate(bool val) {
@@ -23,5 +30,7 @@ class UserProvider with ChangeNotifier{
     _userData = data;
     notifyListeners();
   }
+
+
 
 }

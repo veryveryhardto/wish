@@ -25,7 +25,7 @@ class _MemberListPageState extends State<MemberListPage> {
         child: Container(
           margin: EdgeInsets.all(30),
           height: double.infinity,
-          width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.height)*1.5,
+          width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.width)*0.6,
           child: Column(
             children: [
               Row(

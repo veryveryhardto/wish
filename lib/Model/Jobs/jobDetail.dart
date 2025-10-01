@@ -38,6 +38,18 @@ class Data {
   JobAddress? jobAddress;
   String? jobCreatedAt;
 
+  get jobStatusName {
+    switch(jobStatus){
+      case -1: return '반려';
+      case 0: return '신청';
+      case 1: return '배정전';
+      case 2: return '배정됨';
+      case 3: return '작업중';
+      case 4: return '작업완료';
+      default: return '오류';
+    }
+  }
+
   Data(
       {this.jobUuid,
         this.jobStatus,

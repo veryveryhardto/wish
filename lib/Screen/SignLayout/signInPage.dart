@@ -99,7 +99,7 @@ class _SignInPageState extends State<SignInPage> {
             CustomTextField(title: '전화번호', textController: phoneController,
               validator: (val){
                 if(val!.length==0) return '전화번호를 공란으로 둘 수 없습니다.';
-                else if (!validator.phone(val!)) return '전화번호를 정확히 작성해 주세요';
+                else if (validator.phone(val!)) return '전화번호를 정확히 작성해 주세요';
                 else return null;
               },
               textInputFormatter: [MultiMaskedTextInputFormatter(masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'], separator: '-')],

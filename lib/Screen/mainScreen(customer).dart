@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish/Model/Jobs/jobDetail.dart';
-import 'package:wish/Model/Note/NoteList.dart' as noteList;
-import 'package:wish/Model/Token.dart';
 import 'package:wish/Provider/JobProvider.dart';
 import 'package:wish/Provider/NoteProvider.dart';
 import 'package:wish/Screen/Jobs/addPage_1.dart';
-import 'package:wish/Screen/Jobs/jobDetail_customer.dart';
 import 'package:wish/Screen/SignLayout/loginPage.dart';
-import 'package:wish/Screen/Widget/NoteDialog.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'dart:js' as js;
 
-import 'package:wish/Screen/Jobs/listLayout.dart';
+import 'package:wish/Screen/Jobs/JobList_Customer.dart';
 
 import '../Model/Note/NoteList.dart';
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
-import 'Widget/Indicator.dart';
-import 'Widget/customToast.dart';
 
 class MainScreen_Customer extends StatefulWidget {
   const MainScreen_Customer({super.key,});
@@ -69,39 +62,39 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
         child: Container(
           padding: EdgeInsets.all(20),
           height: double.infinity,
-          width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.height)*1.5,
-          child:Expanded(
+          width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 :(MediaQuery.of(context).size.width)*0.6,
+          child: Expanded(
               child: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<1?
-              ListView(
-                shrinkWrap: true,
-                children: [
-                  Container(
-                      child: FirstColumn(context,note)
-                  ),
-                  SizedBox(height: 10,),
-                  Container(
-                    child: SecondColumn(context,job),
-                  ),
-                  ImageButton(context)
-                ],
-              ):Row(
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: FirstColumn(context,note),),
-                  SizedBox(width: 20,),
-                  Flexible(
-                    flex: 1,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ImageButton(context),
-                        SecondColumn(context,job),
-                      ],
-                    ),)
-                ],
-              )
+          ListView(
+            shrinkWrap: true,
+            children: [
+              Container(
+                  child: FirstColumn(context,note)
+              ),
+              SizedBox(height: 10,),
+              Container(
+                child: SecondColumn(context,job),
+              ),
+              ImageButton(context)
+            ],
+          ):Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: FirstColumn(context,note),),
+              SizedBox(width: 20,),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImageButton(context),
+                    SecondColumn(context,job),
+                  ],
+                ),)
+            ],
           ),
+        )
         ),
       ),
     );
@@ -190,6 +183,7 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
               shadowColor: Color(0xffffff),
             ),
             onPressed: () async{
+              /*
               Indicator().show(context);
               var json = await Service().Fetch('', 'get', '/api/public/jobs/4a79102e-f6c3-481a-9a33-8892c82e6f99?phone=010-3333-2244');
               try {
@@ -204,6 +198,9 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
                 Indicator().dismiss();
                 print(e);
               }
+
+               */
+              Navigator.push(context, MaterialPageRoute(builder: (context) => JobList_Customer()));
             },
             child: Text('신청 목록')),
       ),
