@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wish/Model/Jobs/jobDetail.dart';
-import 'package:wish/Model/Note/NoteList.dart' as note;
 import 'package:wish/Provider/JobProvider.dart';
+import 'package:wish/Provider/NoteProvider.dart';
 import 'package:wish/Screen/Jobs/addPage_1.dart';
-import 'package:wish/Screen/Jobs/jobDetail_customer.dart';
 import 'package:wish/Screen/SignLayout/loginPage.dart';
-import 'package:wish/Screen/Widget/NoteDialog.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'dart:js' as js;
 
-import 'package:wish/Screen/Jobs/listLayout.dart';
+import 'package:wish/Screen/Jobs/JobList_Customer.dart';
 
+import '../Model/Note/NoteList.dart';
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
-import 'Widget/Indicator.dart';
-import 'Widget/customToast.dart';
 
 class MainScreen_Customer extends StatefulWidget {
   const MainScreen_Customer({super.key,});
@@ -27,9 +23,37 @@ class MainScreen_Customer extends StatefulWidget {
 class _MainScreen_CustomerState extends State<MainScreen_Customer> {
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_)=>Notice());
+  }
+
+  Future<void> Notice() async{
+    NoteProvider note=Provider.of<NoteProvider>(context,listen: false);
+
+    var json=await Service().Fetch('', 'get', '/api/notices',);
+    if(json==false) return;
+    else {
+      try {
+        var data = NoteList.fromJson(json);
+        if(data.code=='success'&&data.data!=null&&data.data!.length>0){
+          note.setNoteList=data;
+          note.setNoteData(data,context);
+        }
+        else return;
+      } catch(e){
+        print(e);
+      }
+    }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     UserProvider ui=Provider.of<UserProvider>(context);
     JobProvider job=Provider.of<JobProvider>(context);
+    NoteProvider note=Provider.of<NoteProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(title: '메인',
           action: LoginButton(context),
@@ -39,42 +63,55 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
         child: Container(
           padding: EdgeInsets.all(20),
           height: double.infinity,
-          width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.height)*1.5,
-          child:Expanded(
+          width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 :(MediaQuery.of(context).size.width)*0.6,
+          child: Expanded(
               child: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<1?
-              ListView(
-                shrinkWrap: true,
-                children: [
-                  Container(
-                      child: FirstColumn(context)
-                  ),
-                  SizedBox(height: 20,),
-                  Container(
-                    child: SecondColumn(context,job),
-                  ),
-                  ImageButton(context),
-                ],
-              ):Row(
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: FirstColumn(context),),
-                  SizedBox(width: 20,),
-                  Flexible(
-                    flex: 1,
-                    child: Column(
-                      children: [
-                        ImageButton(context),
-                        SecondColumn(context,job),
-                      ],
-                    ),)
-                ],
-              )
+          ListView(
+            shrinkWrap: true,
+            children: [
+              Container(
+                  child: FirstColumn(context,note)
+              ),
+              SizedBox(height: 10,),
+              Container(
+                child: SecondColumn(context,job),
+              ),
+              ImageButton(context)
+            ],
+          ):Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: FirstColumn(context,note),),
+              SizedBox(width: 20,),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImageButton(context),
+                    SecondColumn(context,job),
+                  ],
+                ),)
+            ],
           ),
+        )
         ),
       ),
     );
   }
+  Widget ImageButton(BuildContext context)=>Container(
+    width: double.infinity,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.zero, // 버튼 내부 패딩 제거
+        backgroundColor: Colors.transparent, // 배경색 제거
+        shadowColor: Colors.transparent, // 그림자 제거
+      ),
+      onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
+      child: Image.asset('assets/image/ImageButton.png',),
+    ),
+  );
   Widget LoginButton(BuildContext context)=>Padding(
     padding: const EdgeInsets.all(10),
     child: ElevatedButton(
@@ -87,21 +124,9 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
       child: Text('업체용 로그인',style: TextStyle(color: Color(0xff50C7E1),),
       ),),
   );
-  Widget ImageButton(BuildContext context)=>Container(
-    width: double.infinity,
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.zero,
-        backgroundColor: Colors.transparent,
-        shadowColor: Colors.transparent,
-      ),
-      onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
-      child: Image.asset('assets/image/ImageButton.png',),
-    ),
-  );
 
-  Widget FirstColumn(BuildContext context)=>Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
+  Widget FirstColumn(BuildContext context,NoteProvider note)=>Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
     children: [
       Padding(
@@ -111,23 +136,25 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
       Container(
         margin: EdgeInsets.only(bottom: 10),
         decoration: const BoxDecoration(
-          color: Colors.white,
+          //  color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: 10,
-          padding: const EdgeInsets.all(15),
-          itemBuilder: (context,index)=>InkWell(
-            onTap: ()=>NoteDialog().show(context,created: true,note:note.Data(
-              noticeBody: '내용', noticeTitle: '제목', createdBy: '사람', createdAt: '날짜')
-            ),
-            child: ListTile(
-              title: Text('제목',),
-              trailing: Text('날짜'),
-            ),
-          ),
-        ),
+        child: note.noteList.code=='success'&&note.noteList.data!=null&&note.noteList.data!.length>0?
+        PaginatedDataTable(
+          source: note.noteData!,
+          columns: const [
+            DataColumn(label: Text('')),
+            DataColumn(label: Text(''),numeric: true)
+          ],
+          headingRowHeight : 20,
+          rowsPerPage: 10,
+          dataRowMinHeight: 30,
+          dataRowMaxHeight: 30,
+          dividerThickness: 0.0001,
+          showCheckboxColumn: false,
+        ):Center(child: Padding(
+          padding: EdgeInsets.all(20),
+            child: Text('공지가 없습니다.')))
       )
     ],
   );
@@ -157,6 +184,7 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
               shadowColor: Color(0xffffff),
             ),
             onPressed: () async{
+              /*
               Indicator().show(context);
               var json = await Service().Fetch('', 'get', '/api/public/jobs/4a79102e-f6c3-481a-9a33-8892c82e6f99?phone=010-3333-2244');
               try {
@@ -171,6 +199,9 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
                 Indicator().dismiss();
                 print(e);
               }
+
+               */
+              Navigator.push(context, MaterialPageRoute(builder: (context) => JobList_Customer()));
             },
             child: Text('신청 목록')),
       ),

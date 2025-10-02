@@ -3,14 +3,12 @@
 
 //@JS()
 //external JSPromise execDaumPostcode();
-
-void main() {
-  var test;
-  test=5;
-  print(test);
-  test='test?';
-  print(test);
-  //runApp(const MyApp());
+void main(){
+  List<int> list = [1,2,3,4,5];
+  var list2=list.where((e){
+    return e<2;
+    //else return null;
+  });
 }
 /*
 class MyApp extends StatelessWidget {

@@ -5,7 +5,6 @@ import 'package:wish/Model/Jobs/jobDetail.dart';
 import 'package:wish/Screen/SignLayout/loginPage.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
-import 'package:wish/Screen/Jobs/listLayout.dart';
 
 import '../../Provider/JobProvider.dart';
 
@@ -55,7 +54,7 @@ class _JobDetail_CustomerState extends State<JobDetail_Customer> {
         child: Container(
           padding: EdgeInsets.all(20),
           height: double.infinity,
-          width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.height)*1.5,
+          width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.width)*0.6,
           child: Row(
             children: [
               Flexible(
@@ -114,60 +113,66 @@ class _JobDetail_CustomerState extends State<JobDetail_Customer> {
       CustomTextField(data: job.jobCategoryName, title: '카테고리', readOnly: true,),
     ],
   );
-  Widget SecondDetail(BuildContext context,bool isVertical, Data job)=>Column(
-    mainAxisSize: isVertical? MainAxisSize.min:MainAxisSize.max,
-    mainAxisAlignment: isVertical? MainAxisAlignment.start:MainAxisAlignment.spaceEvenly,
-    children: [
-      Flexible(
-          child:Column(
+  Widget SecondDetail(BuildContext context,bool isVertical, Data job) {
+    return Column(
+      mainAxisSize: isVertical ? MainAxisSize.min : MainAxisSize.max,
+      mainAxisAlignment: isVertical
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.spaceEvenly,
+      children: [
+        Flexible(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              CustomTextField(data: job.managerName, title: '담당자명', readOnly: true,),
-              CustomTextField(data: job.jobScheduledAt, title: '예약일', readOnly: true,),
-              CustomTextField(data: job.jobStatus.toString(), title: '진행상태', readOnly: true,),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text('요청사항', style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Color(0xff50C7E1)),),),
-              SizedBox(height: 5,),
-              Flexible(
-                child: TextFormField(
-                  textAlignVertical: TextAlignVertical.top,
-                  expands: true,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    fillColor: Color(0xfff5f5f5),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide.none
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          width: 2,
-                          color: Color(0xff50C7E1),
-                        )
-                    ),
-                  ),
-                  initialValue: job.jobRequestDesc,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                ),
+            CustomTextField(data: job.managerName, title: '담당자명',
+            readOnly: true,),
+          CustomTextField(
+            data: job.jobScheduledAt, title: '예약일', readOnly: true,),
+          CustomTextField(data: job.jobStatusName, title: '진행상태', readOnly: true,),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text('요청사항', style: TextStyle(
+              fontWeight: FontWeight.bold, color: Color(0xff50C7E1)),),),
+        SizedBox(height: 5,),
+        Flexible(
+          child: TextFormField(
+            textAlignVertical: TextAlignVertical.top,
+            expands: true,
+            decoration: InputDecoration(
+              isDense: true,
+              filled: true,
+              fillColor: Color(0xfff5f5f5),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  borderSide: BorderSide.none
               ),
-              SizedBox(height: 5,)
-            ],
-          )),
-      Container(
-          width: double.infinity,
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-                side:BorderSide(color: Color(0xff50C7E1)),
-                padding: EdgeInsets.symmetric(vertical: 20)
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  borderSide: BorderSide(
+                    width: 2,
+                    color: Color(0xff50C7E1),
+                  )
+              ),
             ),
-            onPressed: ()=>Navigator.of(context).pop(),
-            child: Text('닫기',style: TextStyle(fontSize: 20,color: Color(0xff50C7E1))),
-          ))
+            initialValue: job.jobRequestDesc,
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+          ),
+        ),
+        SizedBox(height: 5,)
+      ],
+    )),
+    Container(
+    width: double.infinity,
+    child: OutlinedButton(
+    style: OutlinedButton.styleFrom(
+    side:BorderSide(color: Color(0xff50C7E1)),
+    padding: EdgeInsets.symmetric(vertical: 20)
+    ),
+    onPressed: ()=>Navigator.of(context).pop(),
+    child: Text('닫기',style: TextStyle(fontSize: 20,color: Color(0xff50C7E1))),
+    ))
     ],
-  );
+    );
+  }
 }

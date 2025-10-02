@@ -1,6 +1,6 @@
 class NoteList {
   String? code;
-  List<Data>? data;
+  List<Data>? data = [];
 
   NoteList({this.code, this.data});
 
@@ -30,8 +30,8 @@ class Data {
   String? noticeBody;
   bool? isPinned;
   String? createdBy;
-  String? createdAt;
-  String? updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   Data(
       {this.noticeUuid,
@@ -48,8 +48,8 @@ class Data {
     noticeBody = json['notice_body'];
     isPinned = json['is_pinned'];
     createdBy = json['created_by'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    createdAt = DateTime.parse(json['created_at']);
+    updatedAt = DateTime.parse(json['updated_at']);
   }
 
   Map<String, dynamic> toJson() {
@@ -59,8 +59,8 @@ class Data {
     data['notice_body'] = this.noticeBody;
     data['is_pinned'] = this.isPinned;
     data['created_by'] = this.createdBy;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    data['created_at'] = this.createdAt.toString();
+    data['updated_at'] = this.updatedAt.toString();
     return data;
   }
 }

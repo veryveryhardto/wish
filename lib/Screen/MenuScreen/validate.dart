@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:wish/Screen/MenuScreen/memberPage.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
@@ -23,11 +24,10 @@ class ValidatePage extends StatefulWidget {
 }
 
 class _ValidatePageState extends State<ValidatePage> {
-
-  Token token = Token();
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _passwordController = TextEditingController();
+  final _tokenStorage = const FlutterSecureStorage();
 
   @override
   void dispose() {
@@ -73,10 +73,18 @@ class _ValidatePageState extends State<ValidatePage> {
                     onPressed: () async {
                       if(_formKey.currentState!.validate()){
                         try {
-                          var validate = sha256.convert(utf8.encode(_passwordController.text)).toString()==await Token().PasswordRead();
-                          if(validate) {
+                          var _password = {
+                            "currentPassword":sha256.convert(utf8.encode(_passwordController.text)).toString(),
+                            "newPassword":sha256.convert(utf8.encode(_passwordController.text)).toString()
+                          };
+                          Indicator().show(context);
+                          var json = await Service().Fetch(_password, 'patch', '/api/auth/me/password', await Token().AccessRead());
+                          var data = Retrieve.fromJson(json);
+                          Indicator().dismiss();
+                          if(data.code=='success'){
+                            await _tokenStorage.write(key: 'pass', value: sha256.convert(utf8.encode(_passwordController.text)).toString());
                             Indicator().show(context);
-                            var json = await Service().Fetch('', 'get', '/api/auth/me', await token.AccessRead());
+                            var json = await Service().Fetch('', 'get', '/api/auth/me', await Token().AccessRead());
                             var data = Retrieve.fromJson(json);
                             Indicator().dismiss();
                             if(data.code=='success'){
