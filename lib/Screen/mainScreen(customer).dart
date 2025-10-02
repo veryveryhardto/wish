@@ -183,26 +183,7 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
               elevation: 0,
               shadowColor: Color(0xffffff),
             ),
-            onPressed: () async{
-              /*
-              Indicator().show(context);
-              var json = await Service().Fetch('', 'get', '/api/public/jobs/4a79102e-f6c3-481a-9a33-8892c82e6f99?phone=010-3333-2244');
-              try {
-                var data = JobDetail.fromJson(json);
-                if(data.code=='success'){
-                  job.currentJobDetail=data;
-                  Indicator().dismiss();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail_Customer()));
-                }
-              } catch(e){
-                CustomToast('잘못된 접근입니다.', context);
-                Indicator().dismiss();
-                print(e);
-              }
-
-               */
-              Navigator.push(context, MaterialPageRoute(builder: (context) => JobList_Customer()));
-            },
+            onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => JobList_Customer())),
             child: Text('신청 목록')),
       ),
     ],

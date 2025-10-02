@@ -218,7 +218,7 @@ class _MemberListPageState extends State<MemberListPage> {
                               DataColumn2(
                                 label: Text('등급'),
                                 size: ColumnSize.S,
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.roleName, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.role.toString(), columnIndex, ascending),
                               ),
                               DataColumn2(
                                 label: Text('소속'),

@@ -6,8 +6,13 @@ import 'package:regexed_validator/regexed_validator.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
 
+import '../../Model/Jobs/jobDetail.dart'as detail;
+import '../../Model/Jobs/jobList_Customer.dart'as jobList;
+import '../../Provider/JobProvider.dart';
 import '../../Provider/UserProvider.dart';
+import '../../Service.dart';
 import '../SignLayout/loginPage.dart';
+import 'jobDetail_customer.dart';
 
 class JobList_Customer extends StatefulWidget {
   const JobList_Customer({super.key,});
@@ -21,25 +26,21 @@ class _JobList_CustomerState extends State<JobList_Customer> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _phone = TextEditingController();
-  String _lastPhone = '';
   TextEditingController _text = TextEditingController();
+  String _lastPhone = '';
+  bool _phoneChanged = false;
+  List<jobList.Items> _lastlist = [];
   bool _sortAscending = true;
   int? _sortColumnIndex;
 
-  List<User> _users = [
-    User('John Doe', 25, 'Developer'),
-    User('Jane Smith', 30, 'Designer'),
-    User('Alex Johnson', 28, 'Manager'),
-  ];
-
   void _sort<T>(
-      Comparable<T> Function(User user) getField,
+      Comparable<T> Function(jobList.Items data) getField,
       int columnIndex,
       bool ascending,
       ) {
-    _users.sort((a, b) {
+    _lastlist.sort((a, b) {
     if (!ascending) {
-      final User c = a;
+      final jobList.Items c = a;
       a = b;
       b = c;
     }
@@ -55,7 +56,7 @@ class _JobList_CustomerState extends State<JobList_Customer> {
 
   @override
   Widget build(BuildContext context) {
-    UserProvider ui=Provider.of<UserProvider>(context);
+    JobProvider job=Provider.of<JobProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(title: '시공 조회',
           //action: ui.isLogined?null:LoginButton(context)
@@ -84,15 +85,17 @@ class _JobList_CustomerState extends State<JobList_Customer> {
                       child: Column(
                         children: [
                           CustomTextField(textController: _phone, title: '전화번호',
+                            onChnaged: (val)=>setState(()=>_phoneChanged=true),
                             validator: (val){
-                              if(val!.length < 0) return '전화번호를 작성해 주세요';
-                              else if (validator.phone(val!)) return '전화번호를 정확히 작성해 주세요';
+                            print(val);
+                              if(val!.length == 0 ) return '전화번호를 작성해 주세요';
+                              else if (!validator.phone(val!)) return '전화번호를 정확히 작성해 주세요';
                               else return null;
                             },
                             textInputFormatter: [MultiMaskedTextInputFormatter(masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'], separator: '-')],
                             textInputType: TextInputType.phone,
                           ),
-                          CustomTextField(textController: _text, title: '검색어'),
+                          CustomTextField(textController: _text, title: '카테고리명'),
                         ],
                       ),
                     ),
@@ -104,9 +107,54 @@ class _JobList_CustomerState extends State<JobList_Customer> {
                         width: double.infinity,
                         height: 150,
                         child: ElevatedButton(
-                          onPressed: (){if(_formKey.currentState!.validate()){
-                            print('ok');
-                          }},
+                          onPressed: () async{
+                            if(_formKey.currentState!.validate()) {
+                              if (_phoneChanged) {
+                                _lastPhone = _phone.text;
+                                List<jobList.Items> list = job.jobList==null||job.jobList.data.items==null?[]:job.jobList.data.items;
+                                var json = await Service().Fetch('', 'get',
+                                  '/api/public/jobs/mine?phone=${_phone
+                                      .text}',);
+                                var data = jobList.JobList_Customer.fromJson(json);
+                                _phoneChanged = false;
+                                if (data.code == 'success' &&
+                                    data.data!.items != null &&
+                                    data.data!.items!.length > 0) {
+                                  job.jobList = data;
+                                  print(job.jobList.toJson());
+                                  _lastlist = jobList.JobList_Customer
+                                      .fromJson(job.jobList.toJson())
+                                      .data!.items!;
+                                /*else {
+
+                                  try {
+                                    var data = JobList.fromJson(json);
+                                    _phoneChanged = false;
+                                    if (data.code == 'success' &&
+                                        data.data != null &&
+                                        data.data!.length > 0) {
+                                      job.jobList = data;
+                                      _lastlist = JobList
+                                          .fromJson(job.jobList.toJson())
+                                          .data!;
+                                    }
+                                    else
+                                      return;
+                                  } catch (e) {
+                                    print(e);
+                                  }*/
+                                }
+                                setState(() {
+                                  _lastlist = list.where(
+                                      _text.text != '' ? (e) =>
+                                          e.jobCategoryName!.contains(_text.text) :
+                                          (e) => true).toList();
+                                  _sortColumnIndex = null;
+                                  _sortAscending = true;
+                                });
+                              }
+                            }
+                            },
                           child: Text('검색'),
                         ),
                       ),
@@ -137,31 +185,46 @@ class _JobList_CustomerState extends State<JobList_Customer> {
                     sortArrowIconColor:Color(0xff50C7E1),
                     columns: [
                       DataColumn2(
-                        label: Text('날짜'),
-                        onSort: (columnIndex, ascending) => _sort<String>((user) => user.name, columnIndex, ascending),
+                        label: Text('신청상태'),
+                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.jobStatus.toString(), columnIndex, ascending),
                       ),
                       DataColumn2(
-                        label: Text('신청자명'),
+                        label: Text('카테고리'),
+                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.jobCategoryName!, columnIndex, ascending),
                       ),
                       DataColumn2(
-                        label: Text('타입'),
+                        label: Text('작업자명'),
+                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.managerName!, columnIndex, ascending),
                       ),
                       DataColumn2(
-                        label: Text('작업범위'),
-                      ),
-                      DataColumn2(
-                        label: Text('주소'),
+                        label: Text('작업일'),
                         size: ColumnSize.L,
+                        onSort: (columnIndex, ascending) => _sort<DateTime>((data) => data.jobScheduleTime!, columnIndex, ascending),
                       ),
                     ],
-                    rows: List<DataRow>.generate( 0, (index) => DataRow(cells: [
-                      DataCell(Text(_users[index].name)),
-                      DataCell(Text(_users[index].age.toString())),
-                      DataCell(Text(_users[index].role)),
-                      DataCell(Text(_users[index].role)),
-                      DataCell(Text(_users[index].role)),
+                    rows: List<DataRow>.generate( _lastlist.length, (index) => DataRow(cells: [
+                      DataCell(Text(_lastlist[index].jobStatusName)),
+                      DataCell(Text(_lastlist[index].jobCategoryName??'')),
+                      DataCell(Text(_lastlist[index].managerName??'미정')),
+                      DataCell(Text(_lastlist[index].jobScheduledAt==null?'미정':_lastlist[index].jobScheduleTime.toString().substring(0,10))),
                         ],
-                              onSelectChanged: (selected){/*
+                              onSelectChanged: (selected) async {
+                      if(selected!){
+                        var json = await Service().Fetch('', 'get',
+                          '/api/public/jobs/${_lastlist[index].jobUuid}?phone=${_lastPhone}',);
+                        if (json == false) return;
+                        else {
+                          try {
+                            var data = detail.JobDetail.fromJson(json);
+                            job.currentJobDetail=data;
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail_Customer()));
+                          } catch (e) {
+                            print(e);
+                          }
+                        }
+                        }
+
+                      /*
                               role 1 이상 - /api/staff/jobs/:id
                                 role - /api/public/jobs/d2da8136-d5e1-4484-8ac9-5ef670760461?phone=010-3333-2244
                                 if(selected!) Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail()));
@@ -189,12 +252,4 @@ class _JobList_CustomerState extends State<JobList_Customer> {
       child: Text('업체용 로그인',style: TextStyle(color: Color(0xff50C7E1),),
       ),),
   );
-}
-
-class User {
-  final String name;
-  final int age;
-  final String role;
-
-  User(this.name, this.age, this.role);
 }

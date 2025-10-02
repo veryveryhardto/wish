@@ -53,8 +53,8 @@ class _AddPage_1State extends State<AddPage_1> {
                 textController: _phone,
                 title: '휴대폰 번호',
                 validator: (val){
-                  if(val!.length < 0) return '전화번호를 작성해 주세요';
-                  else if (validator.phone(val!)) return '전화번호를 정확히 작성해 주세요';
+                  if(val!.length == 0) return '전화번호를 작성해 주세요';
+                  else if (!validator.phone(val!)) return '전화번호를 정확히 작성해 주세요';
                   else return null;
                 },
                 textInputFormatter: [MultiMaskedTextInputFormatter(masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'], separator: '-')],

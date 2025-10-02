@@ -1,3 +1,6 @@
+
+List<String> jobStatusList = ['신청','배정전','배정됨','작업중','작업완료','반려'];
+
 class JobList {
   String? code;
   List<Data>? data;
@@ -27,7 +30,8 @@ class JobList {
 class Data {
   String? jobUuid;
   int? jobStatus;
-  Null? jobScheduledAt;
+  String? jobScheduledAt;
+  DateTime? jobScheduleTime;
   Null? jobArea;
   String? jobRequestDesc;
   String? jobCategoryUuid;
@@ -37,10 +41,22 @@ class Data {
   Null? managerName;
   Null? jobManagerUuid;
 
+  get jobStatusName {
+    switch(jobStatus){
+      case 0: return '신청';
+      case 1: return '배정전';
+      case 2: return '배정됨';
+      case 3: return '작업중';
+      case 4: return '작업완료';
+      default: return '반려';
+    }
+  }
+
   Data(
       {this.jobUuid,
         this.jobStatus,
         this.jobScheduledAt,
+        this.jobScheduleTime,
         this.jobArea,
         this.jobRequestDesc,
         this.jobCategoryUuid,
@@ -54,6 +70,7 @@ class Data {
     jobUuid = json['job_uuid'];
     jobStatus = json['job_status'];
     jobScheduledAt = json['job_scheduled_at'];
+    jobScheduleTime = json['job_scheduled_at']==null?null:DateTime.parse(json['job_scheduled_at']);
     jobArea = json['job_area'];
     jobRequestDesc = json['job_request_desc'];
     jobCategoryUuid = json['job_category_uuid'];
@@ -68,7 +85,7 @@ class Data {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['job_uuid'] = this.jobUuid;
     data['job_status'] = this.jobStatus;
-    data['job_scheduled_at'] = this.jobScheduledAt;
+    data['job_scheduled_at'] = this.jobScheduleTime==null?this.jobScheduleTime.toString():null;
     data['job_area'] = this.jobArea;
     data['job_request_desc'] = this.jobRequestDesc;
     data['job_category_uuid'] = this.jobCategoryUuid;

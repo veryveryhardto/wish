@@ -48,7 +48,8 @@ class Data {
 class Items {
   String? jobUuid;
   int? jobStatus;
-  Null? jobScheduledAt;
+  String? jobScheduledAt;
+  DateTime? jobScheduleTime;
   Null? jobArea;
   String? jobRequestDesc;
   String? jobCategoryUuid;
@@ -58,10 +59,21 @@ class Items {
   Null? managerName;
   Null? jobManagerUuid;
 
+  get jobStatusName {
+    switch(jobStatus){
+      case 0: return '신청';
+      case 1: return '배정전';
+      case 2: return '배정됨';
+      case 3: return '작업중';
+      case 4: return '작업완료';
+      default: return '반려';
+    }
+  }
   Items(
       {this.jobUuid,
         this.jobStatus,
         this.jobScheduledAt,
+        this.jobScheduleTime,
         this.jobArea,
         this.jobRequestDesc,
         this.jobCategoryUuid,
@@ -72,9 +84,11 @@ class Items {
         this.jobManagerUuid});
 
   Items.fromJson(Map<String, dynamic> json) {
+    print('istrue?${json['job_scheduled_at']==null}');
     jobUuid = json['job_uuid'];
     jobStatus = json['job_status'];
     jobScheduledAt = json['job_scheduled_at'];
+    jobScheduleTime = json['job_scheduled_at']==null||json['job_scheduled_at']==''?null:DateTime.parse(json['job_scheduled_at']);
     jobArea = json['job_area'];
     jobRequestDesc = json['job_request_desc'];
     jobCategoryUuid = json['job_category_uuid'];
@@ -89,7 +103,7 @@ class Items {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['job_uuid'] = this.jobUuid;
     data['job_status'] = this.jobStatus;
-    data['job_scheduled_at'] = this.jobScheduledAt;
+    data['job_scheduled_at'] = this.jobScheduleTime==null?this.jobScheduleTime.toString():null;
     data['job_area'] = this.jobArea;
     data['job_request_desc'] = this.jobRequestDesc;
     data['job_category_uuid'] = this.jobCategoryUuid;
