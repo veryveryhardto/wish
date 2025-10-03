@@ -84,11 +84,10 @@ class Items {
         this.jobManagerUuid});
 
   Items.fromJson(Map<String, dynamic> json) {
-    print('istrue?${json['job_scheduled_at']==null}');
     jobUuid = json['job_uuid'];
     jobStatus = json['job_status'];
     jobScheduledAt = json['job_scheduled_at'];
-    jobScheduleTime = json['job_scheduled_at']==null||json['job_scheduled_at']==''?null:DateTime.parse(json['job_scheduled_at']);
+    jobScheduleTime = json['job_scheduled_at']==null||json['job_scheduled_at']=='null'?null:DateTime.parse(json['job_scheduled_at']);
     jobArea = json['job_area'];
     jobRequestDesc = json['job_request_desc'];
     jobCategoryUuid = json['job_category_uuid'];

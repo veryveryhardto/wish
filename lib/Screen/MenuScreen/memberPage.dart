@@ -114,10 +114,6 @@ class _MemberPageState extends State<MemberPage> {
                 textController: _affiliationController,
                 title: '소속',
                 readOnly: _readOnly,
-                validator: (val){
-                  if(val!.length==0) return '소속을 공란으로 둘 수 없습니다.';
-                  else return null;
-                },
               ),
               SizedBox(height: 30,),
               Container(

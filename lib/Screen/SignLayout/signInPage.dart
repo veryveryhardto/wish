@@ -105,12 +105,7 @@ class _SignInPageState extends State<SignInPage> {
               textInputFormatter: [MultiMaskedTextInputFormatter(masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'], separator: '-')],
               textInputType: TextInputType.phone,
             ),
-            CustomTextField(title: '소속', textController: affiliationController,
-              validator: (val){
-                if(val!.length==0) return '소속을 공란으로 둘 수 없습니다.';
-                else return null;
-              },
-            ),
+            CustomTextField(title: '소속', textController: affiliationController,),
             SizedBox(height:20),
             Container(
               width: double.infinity,

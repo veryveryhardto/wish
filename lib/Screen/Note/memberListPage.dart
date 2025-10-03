@@ -154,28 +154,26 @@ class _MemberListPageState extends State<MemberListPage> {
                               child: ElevatedButton(
                                 onPressed: (){
                                   setState(() {
-                                    if(_name.text==''&&_role.text=='') print('null');
-                                    else {
-                                      List<member.Items> _list = user.memberList
-                                          .data!.items ?? [];
-                                      setState(() {
-                                        _lastlist = _list.where(
-                                            _name.text != '' && _role.text != ''
-                                                ? (e) =>
-                                            e.name!.contains(_name.text) &&
-                                                member.memberRole.indexOf(
-                                                    _role.text) == e.role
-                                                :
-                                            _name.text != '' ? (e) =>
-                                                e.name!.contains(_name.text) :
-                                            _role.text != '' ? (e) =>
-                                            member.memberRole.indexOf(
-                                                _role.text) == e.role :
-                                                (e) => true).toList();
-                                        _sortColumnIndex = null;
-                                        _sortAscending = true;
-                                      });
-                                    }
+                                    List<member.Items> _list = user.memberList
+                                        .data!.items ?? [];
+                                    setState(() {
+                                      _lastlist = _list.where(
+                                          _name.text != '' && _role.text != ''
+                                              ? (e) =>
+                                          e.name!.contains(_name.text) &&
+                                              member.memberRole.indexOf(
+                                                  _role.text) == e.role
+                                              :
+                                          _name.text != '' ? (e) =>
+                                              e.name!.contains(_name.text) :
+                                          _role.text != '' ? (e) =>
+                                          member.memberRole.indexOf(
+                                              _role.text) == e.role :
+                                              (e) => true).toList();
+
+                                    });
+                                    _sortColumnIndex = null;
+                                    _sortAscending = true;
                                   });
                                 },
                                 child: Text('검색'),
@@ -222,7 +220,7 @@ class _MemberListPageState extends State<MemberListPage> {
                               ),
                               DataColumn2(
                                 label: Text('소속'),
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.affiliation!, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.affiliation??'', columnIndex, ascending),
                               ),
                               DataColumn2(
                                 label: Text('전화번호'),
@@ -234,7 +232,7 @@ class _MemberListPageState extends State<MemberListPage> {
                               DataCell(Text(_lastlist[index].loginId??'null')),
                               DataCell(Text(_lastlist[index].name??'null')),
                               DataCell(Text(_lastlist[index].roleName)),
-                              DataCell(Text(_lastlist[index].affiliation??'null')),
+                              DataCell(Text(_lastlist[index].affiliation??'')),
                               DataCell(Text(_lastlist[index].phone??'null')),
                             ],
                               onSelectChanged: (selected){

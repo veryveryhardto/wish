@@ -145,19 +145,16 @@ class _NoteListPageState extends State<NoteListPage> {
                               height: 161,
                               child: ElevatedButton(
                                 onPressed: (){
-                                  if(_name.text==''&&_title.text=='') print('null');
-                                  else{
-                                    List<Data> _list = note.noteList.data??[];
-                                    setState(() {
-                                      _lastList.data = _list.where(
-                                          _name.text!=''&&_title.text!=''?(e)=>e.createdBy!.contains(_name.text)&&e.noticeTitle!.contains(_title.text):
-                                          _name.text!=''?(e)=>e.createdBy!.contains(_name.text):
-                                          _title.text!=''?(e)=>e.noticeTitle!.contains(_title.text):
-                                              (e)=>true).toList();
-                                      _sortColumnIndex=null;
-                                      _sortAscending=true;
-                                    });
-                                  }
+                                  List<Data> _list = note.noteList.data??[];
+                                  setState(() {
+                                    _lastList.data = _list.where(
+                                        _name.text!=''&&_title.text!=''?(e)=>e.createdBy!.contains(_name.text)&&e.noticeTitle!.contains(_title.text):
+                                        _name.text!=''?(e)=>e.createdBy!.contains(_name.text):
+                                        _title.text!=''?(e)=>e.noticeTitle!.contains(_title.text):
+                                            (e)=>true).toList();
+                                  });
+                                  _sortColumnIndex=null;
+                                  _sortAscending=true;
                                 },
                                 child: Text('검색'),
                               ),

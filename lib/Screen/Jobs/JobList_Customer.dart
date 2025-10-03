@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:multi_masked_formatter/multi_masked_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:regexed_validator/regexed_validator.dart';
+import 'package:wish/Screen/Widget/Indicator.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
 
@@ -59,7 +60,7 @@ class _JobList_CustomerState extends State<JobList_Customer> {
     JobProvider job=Provider.of<JobProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(title: '시공 조회',
-          //action: ui.isLogined?null:LoginButton(context)
+          action: LoginButton(context)
       ),
       body: Center(
         child: Container(
@@ -111,49 +112,37 @@ class _JobList_CustomerState extends State<JobList_Customer> {
                             if(_formKey.currentState!.validate()) {
                               if (_phoneChanged) {
                                 _lastPhone = _phone.text;
-                                List<jobList.Items> list = job.jobList==null||job.jobList.data.items==null?[]:job.jobList.data.items;
-                                var json = await Service().Fetch('', 'get',
-                                  '/api/public/jobs/mine?phone=${_phone
-                                      .text}',);
-                                var data = jobList.JobList_Customer.fromJson(json);
-                                _phoneChanged = false;
-                                if (data.code == 'success' &&
-                                    data.data!.items != null &&
-                                    data.data!.items!.length > 0) {
-                                  job.jobList = data;
-                                  print(job.jobList.toJson());
-                                  _lastlist = jobList.JobList_Customer
-                                      .fromJson(job.jobList.toJson())
-                                      .data!.items!;
-                                /*else {
+                                Indicator().show(context);
+                                var json = await Service().Fetch('', 'get', '/api/public/jobs/mine?phone=${_phone.text}',);
+                                try {
 
-                                  try {
-                                    var data = JobList.fromJson(json);
-                                    _phoneChanged = false;
-                                    if (data.code == 'success' &&
-                                        data.data != null &&
-                                        data.data!.length > 0) {
-                                      job.jobList = data;
-                                      _lastlist = JobList
-                                          .fromJson(job.jobList.toJson())
-                                          .data!;
+                                  var data = jobList.JobList_Customer.fromJson(json);
+                                  _phoneChanged = false;
+                                  if (data.code == 'success' &&
+                                      data.data!.items != null &&
+                                      data.data!.items!.length > 0) {
+                                    job.jobList_customer = data;
+                                    _lastlist = jobList.JobList_Customer
+                                        .fromJson(job.jobList_customer.toJson())
+                                        .data!.items!;
                                     }
-                                    else
-                                      return;
-                                  } catch (e) {
-                                    print(e);
-                                  }*/
-                                }
+                                    Indicator().dismiss();
+                                } catch (e) {
+                                  print(e);
+                                  Indicator().dismiss();
+                                  }
                                 setState(() {
-                                  _lastlist = list.where(
+                                  List<jobList.Items>? list = job.jobList_customer.data!.items==null?[]:job.jobList_customer.data!.items;
+                                  _lastlist = list!.where(
                                       _text.text != '' ? (e) =>
                                           e.jobCategoryName!.contains(_text.text) :
                                           (e) => true).toList();
                                   _sortColumnIndex = null;
                                   _sortAscending = true;
                                 });
+
+                                }
                               }
-                            }
                             },
                           child: Text('검색'),
                         ),
@@ -222,15 +211,7 @@ class _JobList_CustomerState extends State<JobList_Customer> {
                             print(e);
                           }
                         }
-                        }
-
-                      /*
-                              role 1 이상 - /api/staff/jobs/:id
-                                role - /api/public/jobs/d2da8136-d5e1-4484-8ac9-5ef670760461?phone=010-3333-2244
-                                if(selected!) Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail()));
-                                role 없으면 Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail_Customer()));
-                                */
-                              },
+                        }},
                             ))),
                 )
               ],

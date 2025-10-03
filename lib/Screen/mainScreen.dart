@@ -3,18 +3,22 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:wish/Model/Jobs/jobList.dart' as jobList;
 import 'package:wish/Screen/Note/memberListPage.dart';
 import 'package:wish/Screen/Note/noteListPage.dart';
 
 import 'package:wish/Screen/Widget/appBar.dart';
-import 'package:wish/Screen/Jobs/JobList_Customer.dart';
 
+import '../Model/Jobs/jobDetail.dart' as detail;
 import '../Model/Note/NoteList.dart';
 import '../Model/Token.dart';
 import '../Model/User/memberlist.dart';
+import '../Provider/JobProvider.dart';
 import '../Provider/NoteProvider.dart';
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
+import 'Jobs/jobDetail.dart';
+import 'Jobs/jobList.dart';
 import 'MenuScreen/menuScreen.dart';
 import 'dart:js' as js;
 
@@ -28,6 +32,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
 
   late final ValueNotifier<List<Event>> _selectedEvents;
+  late final _kEvents;
+  late final Map<DateTime,List<Event>> _kEventSource = {};
 
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -52,16 +58,18 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_)=>Notice());
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
-    WidgetsBinding.instance.addPostFrameCallback((_)=>Notice());
   }
 
   Future<void> Notice() async{
     NoteProvider note=Provider.of<NoteProvider>(context,listen: false);
+    JobProvider job=Provider.of<JobProvider>(context,listen: false);
 
     var json=await Service().Fetch('', 'get', '/api/notices',);
-    if(json==false) return;
+    var json2=await Service().Fetch('', 'get', '/api/staff/jobs',await Token().AccessRead());
+    if(json==false||json2==false) return;
     else {
       try {
         var data = NoteList.fromJson(json);
@@ -69,12 +77,32 @@ class _MainScreenState extends State<MainScreen> {
           note.setNoteList=data;
           note.setNoteData(data,context);
         }
+
+        var data2 = jobList.JobList.fromJson(json2);
+
+        if(data2.code=='success'&&data2.data!=null&&data2.data!.length>0) {
+          job.setJobList=data2;
+          if(job.jobList.data!=null){
+            for(var item in job.jobList.data!){
+              if(item.jobScheduleTime==null) continue;
+              DateTime date = DateTime(item.jobScheduleTime!.year,item.jobScheduleTime!.month,item.jobScheduleTime!.day);
+              if(_kEventSource[date]==null) _kEventSource[date] = [Event(item.customerName!,item.jobUuid!)];
+              else _kEventSource[date]!.add(Event(item.customerName!,item.jobUuid!));
+            }
+          }
+          _kEvents = LinkedHashMap<DateTime, List<Event>>(
+            equals: isSameDay,
+            hashCode: getHashCode,
+          )..addAll(_kEventSource);
+        }
         else return;
       } catch(e){
         print(e);
       }
     }
   }
+  int getHashCode(DateTime key) => key.day * 1000000 + key.month * 10000 + key.year;
+  List<Event> _getEventsForDay(DateTime day) => _kEvents[day] ?? [];
 
   @override
   void dispose() {
@@ -82,10 +110,7 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
   }
 
-  List<Event> _getEventsForDay(DateTime day) {
-    // Implementation example
-    return kEvents[day] ?? [];
-  }
+
 
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -101,7 +126,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     UserProvider user = Provider.of<UserProvider>(context);
-    NoteProvider note=Provider.of<NoteProvider>(context);
+    NoteProvider note = Provider.of<NoteProvider>(context);
+    JobProvider job = Provider.of<JobProvider>(context);
 
     return Scaffold(
       appBar: CustomAppBar(title: '메인',
@@ -137,7 +163,7 @@ class _MainScreenState extends State<MainScreen> {
                 shrinkWrap: true,
                 children: [
                   Container(
-                      child: FirstColumn(context)
+                      child: FirstColumn(context,job)
                   ),
                   SizedBox(height: 20,),
                   Container(
@@ -148,7 +174,7 @@ class _MainScreenState extends State<MainScreen> {
                 children: [
                   Flexible(
                     flex: 1,
-                    child: FirstColumn(context),),
+                    child: FirstColumn(context,job),),
                   SizedBox(width: 20,),
                   Flexible(
                     flex: 1,
@@ -186,7 +212,7 @@ class _MainScreenState extends State<MainScreen> {
     ),
   );
 
-  Widget FirstColumn(BuildContext context)=>Column(
+  Widget FirstColumn(BuildContext context,JobProvider job)=>Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
     children: [
@@ -241,8 +267,21 @@ class _MainScreenState extends State<MainScreen> {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: ListTile(
-                          onTap: () => print('${value[index]}'),
-                          title: Text('${value[index]}'),
+                          onTap: () async{
+                            var json = await Service().Fetch('', 'get',
+                                '/api/staff/jobs/${value[index].jobUUID}',await Token().AccessRead());
+                            if (json == false) return;
+                            else {
+                              try {
+                                var data = detail.JobDetail.fromJson(json);
+                                job.currentJobDetail=data;
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail()));
+                              } catch (e) {
+                                print(e);
+                              }
+                            }
+                          },
+                          title: Text('${value[index].name}'),
                         ),
                       );
                     },
@@ -262,7 +301,7 @@ class _MainScreenState extends State<MainScreen> {
               elevation: 0,
               shadowColor: Color(0xffffff),
             ),
-            onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => JobList_Customer())),
+            onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => JobList())),
             child: Text('신청 목록')),
       ),
 
@@ -366,35 +405,8 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 class Event {
-  final String title;
-  const Event(this.title);
-
-  @override
-  String toString() => title;
+  final String name;
+  final String jobUUID;
+  const Event(this.name, this.jobUUID);
 }
 
-final kEvents = LinkedHashMap<DateTime, List<Event>>(
-  equals: isSameDay,
-  hashCode: getHashCode,
-)..addAll(_kEventSource);
-
-final _kEventSource = {
-  for (var item in List.generate(50, (index) => index))
-    DateTime.utc(2025, 9, item * 5): List.generate(
-      item % 4 + 1,
-          (index) => Event('Event $item | ${index + 1}'),
-    ),
-}..addAll({
-  /*
-  kToday: [
-    const Event("Today's Event 1"),
-    const Event("Today's Event 2"),
-  ],
-
-   */
-  DateTime.utc(2025,9,24) : [Event('이것은 이벤트입니다')]
-});
-
-int getHashCode(DateTime key) {
-  return key.day * 1000000 + key.month * 10000 + key.year;
-}

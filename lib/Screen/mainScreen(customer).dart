@@ -10,6 +10,7 @@ import 'dart:js' as js;
 import 'package:wish/Screen/Jobs/JobList_Customer.dart';
 
 import '../Model/Note/NoteList.dart';
+import '../Model/Token.dart';
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
 
@@ -31,7 +32,6 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
 
   Future<void> Notice() async{
     NoteProvider note=Provider.of<NoteProvider>(context,listen: false);
-
     var json=await Service().Fetch('', 'get', '/api/notices',);
     if(json==false) return;
     else {
@@ -47,7 +47,6 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
