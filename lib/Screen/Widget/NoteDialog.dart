@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -54,9 +56,9 @@ class NoteDialog {
                         Text(title.text,style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
                         _isCreatedBy?IconButton(onPressed: () async {
                           var value = await Delete(context,note!.noticeUuid!);
-                          if(value==true){
-                            CustomToast('공지를 삭제했습니다.', context);
+                          if(value=='true'){
                             Navigator.of(context).pop();
+                            CustomToast('공지를 삭제했습니다.', context);
                             notice.noteList.data!.removeWhere((e)=>e.noticeUuid==note!.noticeUuid);
                             notice.setNoteData(notice.noteList,context);
                           }
@@ -151,8 +153,8 @@ class NoteDialog {
                           }:_modify?() async {
                             if(_formKey.currentState!.validate()){
                               Indicator().show(context);
-                              var json = await Service().Fetch(note.toJson(), 'patch', '/api/notices/${note!.noticeUuid}',await Token().AccessRead());
-                              /*try {
+                              var json = await Service().Fetch(jsonEncode(note.toJson()), 'patch', '/api/notices/${note!.noticeUuid}',await Token().AccessRead());
+                              try {
                                 var data = Message.fromJson(json);
                                 if(data.code=='success'){
                                   Indicator().dismiss();
@@ -172,19 +174,6 @@ class NoteDialog {
                                 Indicator().dismiss();
                                 print(e);
                               }
-
-                               */
-          var data = Message.fromJson(json);
-          if(data.code=='success'){
-          Indicator().dismiss();
-          CustomToast('공지가 수정되었습니다.', context);
-          var json2 =await Service().Fetch('', 'get', '/api/notices',);
-          var data = NoteList.fromJson(json2);
-          if(data.code=='success'&&data.data!=null&&data.data!.length>0){
-          notice.setNoteList=data;
-          notice.setNoteData(data,context);
-          }
-          Navigator.of(_context).pop();}
                             }
                           }:()=>setState(()=>_modify=true),
                           child: Text(create?'생성하기':'수정하기')),
