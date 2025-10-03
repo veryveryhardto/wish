@@ -18,10 +18,11 @@ class NoteDialog {
   late BuildContext _context;
 
   show(BuildContext context, {bool modified = false,bool create=false, Data? note}) {
+    if(note==null) note = Data();
     bool _modify = modified;
 
-    TextEditingController title = TextEditingController(text:modified?'':note!.noticeTitle);
-    TextEditingController body = TextEditingController(text:modified?'':note!.noticeBody);
+    TextEditingController title = TextEditingController(text:create?'':note!.noticeTitle);
+    TextEditingController body = TextEditingController(text:create?'':note!.noticeBody);
     UserProvider user = Provider.of<UserProvider>(context,listen: false);
     NoteProvider notice = Provider.of<NoteProvider>(context,listen: false);
 
@@ -66,7 +67,7 @@ class NoteDialog {
                       ],
                     ),
                     _modify?CheckboxListTile(
-                        value: note!.isPinned??false, onChanged: (val)=>setState(()=>note.isPinned=val),
+                        value: note!.isPinned??false, onChanged: (val)=>setState(()=>note?.isPinned=val),
                       activeColor: Color(0xff50C7E1),
                       checkColor: Color(0xff50C7E1),
                       title: Text('상단 고정'),
@@ -76,7 +77,8 @@ class NoteDialog {
                     _modify?Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
-                      children: [Align(
+                      children: [
+                        Align(
                         alignment: Alignment.centerLeft,
                         child: Text('내용', style: TextStyle(
                             fontWeight: FontWeight.bold, color: Color(0xff50C7E1)),),),
@@ -147,13 +149,13 @@ class NoteDialog {
                               } catch(e){
                                 CustomToast('잘못된 접근입니다.', context);
                                 Indicator().dismiss();
-                                print(e);
+                                debugPrint(e as String);
                               }
                             }
                           }:_modify?() async {
                             if(_formKey.currentState!.validate()){
                               Indicator().show(context);
-                              var json = await Service().Fetch(jsonEncode(note.toJson()), 'patch', '/api/notices/${note!.noticeUuid}',await Token().AccessRead());
+                              var json = await Service().Fetch(jsonEncode(note?.toJson()), 'patch', '/api/notices/${note!.noticeUuid}',await Token().AccessRead());
                               try {
                                 var data = Message.fromJson(json);
                                 if(data.code=='success'){
@@ -172,7 +174,7 @@ class NoteDialog {
                               } catch(e){
                                 CustomToast('잘못된 접근입니다.', context);
                                 Indicator().dismiss();
-                                print(e);
+                                debugPrint(e as String);
                               }
                             }
                           }:()=>setState(()=>_modify=true),
@@ -237,7 +239,7 @@ class NoteDialog {
                       } catch (e) {
                         CustomToast('잘못된 접근입니다.', context);
                         Indicator().dismiss();
-                        print(e);
+                        debugPrint(e as String);
                       }
                     },
                   ),

@@ -46,7 +46,7 @@ class _JobDetailState extends State<JobDetail> {
         }
         else return;
       } catch(e){
-        print(e);
+        debugPrint(e as String?);
       }
     }
   }
@@ -169,7 +169,7 @@ class _JobDetailState extends State<JobDetail> {
         totalSwitches: 3,
         labels: ['공통', '시공', '일정'],
         onToggle: (index) {
-          print('switched to: $index');
+          debugPrint('switched to: $index');
         },
       ),
       Flexible(
@@ -258,7 +258,7 @@ class _JobDetailState extends State<JobDetail> {
                   }
                   else return;
                 } catch(e){
-                  print(e);
+                  debugPrint(e as String?);
                 }
               }
           }, child: Text('작성'),)

@@ -43,10 +43,11 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
         }
         else return;
       } catch(e){
-        print(e);
+        debugPrint(e as String);
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,38 +64,36 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
           padding: EdgeInsets.all(20),
           height: double.infinity,
           width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 :(MediaQuery.of(context).size.width)*0.6,
-          child: Expanded(
-              child: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<1?
-          ListView(
-            shrinkWrap: true,
-            children: [
-              Container(
-                  child: FirstColumn(context,note)
-              ),
-              SizedBox(height: 10,),
-              Container(
-                child: SecondColumn(context,job),
-              ),
-              ImageButton(context)
-            ],
-          ):Row(
-            children: [
-              Flexible(
-                flex: 1,
-                child: FirstColumn(context,note),),
-              SizedBox(width: 20,),
-              Flexible(
-                flex: 1,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ImageButton(context),
-                    SecondColumn(context,job),
-                  ],
-                ),)
-            ],
+          child: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<1?
+                    ListView(
+                      shrinkWrap: true,
+                      children: [
+          Container(
+              child: FirstColumn(context,note)
           ),
-        )
+          SizedBox(height: 10,),
+          Container(
+            child: SecondColumn(context,job),
+          ),
+          ImageButton(context)
+                      ],
+                    ):Row(
+                      children: [
+          Flexible(
+            flex: 1,
+            child: FirstColumn(context,note),),
+          SizedBox(width: 20,),
+          Flexible(
+            flex: 1,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ImageButton(context),
+                SecondColumn(context,job),
+              ],
+            ),)
+                      ],
+                    )
         ),
       ),
     );

@@ -106,7 +106,7 @@ class _NoteListPageState extends State<NoteListPage> {
                           }
                           else return;
                         } catch(e){
-                          print(e);
+                          debugPrint(e as String);
                         }
                       }
                       },

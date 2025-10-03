@@ -1,28 +1,22 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Service{
 
-  String _token = '';
-  String _device = '';
-
-  late Map<String, String> headers={
-    'Connection':'keep-alive',
-    'Authorization':_token,
-    'Device':_device
-  };
-
-
   Future<dynamic> Fetch(var data,String method,String link,[var token,String? device]) async{
     //String url= 'http://115.68.232.69:22000';
     String url= 'http://api.wishclean.co.kr:22000';
-    _token='Bearer $token';
-    _device=device ?? '';
+    final headers = <String, String>{
+      'Accept': 'application/json',
+      if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+      if (device != null && device.isNotEmpty) 'device': device,
+      // ❌ 'Connection' 같은 금지/무의미 헤더는 넣지 말 것
+    };
     http.Response response;
-    print(token);
-    print(data);
-    print(url+link);
+    debugPrint(token);
+    debugPrint(data);
+    debugPrint(url+link);
 
     try {
       switch (method) {
@@ -45,12 +39,12 @@ class Service{
           return false;
       }
     } catch(e){
-      print(e);
+      debugPrint(e as String);
       return e;
     }
 
     final int statusCode=response.statusCode;
-    print('bytes:${utf8.decode(response.bodyBytes)}');
+    debugPrint('bytes:${utf8.decode(response.bodyBytes)}');
     if (statusCode<200||statusCode>500) return false;
     return json.decode(utf8.decode(response.bodyBytes));
   }

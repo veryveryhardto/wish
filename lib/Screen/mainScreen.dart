@@ -97,7 +97,7 @@ class _MainScreenState extends State<MainScreen> {
         }
         else return;
       } catch(e){
-        print(e);
+        debugPrint(e as String);
       }
     }
   }
@@ -277,7 +277,7 @@ class _MainScreenState extends State<MainScreen> {
                                 job.currentJobDetail=data;
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail()));
                               } catch (e) {
-                                print(e);
+                                debugPrint(e as String);
                               }
                             }
                           },
@@ -364,7 +364,7 @@ class _MainScreenState extends State<MainScreen> {
                       }
                       else return;
                     } catch(e){
-                      print(e);
+                      debugPrint(e as String);
                     }
                   }
 
@@ -393,7 +393,7 @@ class _MainScreenState extends State<MainScreen> {
                       }
                       else return;
                     } catch(e){
-                      print(e);
+                      debugPrint(e as String);
                     }
                   }
                 }, child: Text('회원 관리')),

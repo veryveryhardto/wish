@@ -128,7 +128,7 @@ class _JobList_CustomerState extends State<JobList_Customer> {
                                     }
                                     Indicator().dismiss();
                                 } catch (e) {
-                                  print(e);
+                                  debugPrint(e as String);
                                   Indicator().dismiss();
                                   }
                                 setState(() {
@@ -208,7 +208,7 @@ class _JobList_CustomerState extends State<JobList_Customer> {
                             job.currentJobDetail=data;
                             Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail_Customer()));
                           } catch (e) {
-                            print(e);
+                            debugPrint(e as String);
                           }
                         }
                         }},

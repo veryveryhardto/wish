@@ -176,7 +176,7 @@ class _JobListState extends State<JobList> {
                               job.currentJobDetail=data;
                               Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail()));
                             } catch (e) {
-                              print(e);
+                              debugPrint(e as String);
                             }
                           }
                         }

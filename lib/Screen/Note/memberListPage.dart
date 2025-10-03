@@ -103,7 +103,7 @@ class _MemberListPageState extends State<MemberListPage> {
                           }
                           else return;
                         } catch(e){
-                          print(e);
+                          debugPrint(e as String);
                         }
                       }
                       },
@@ -296,7 +296,7 @@ class _MemberListPageState extends State<MemberListPage> {
                         } catch(e){
                           CustomToast('잘못된 접근입니다.', context);
                           Indicator().dismiss();
-                          print(e);
+                          debugPrint(e as String);
                         }
                       },
                     ),
