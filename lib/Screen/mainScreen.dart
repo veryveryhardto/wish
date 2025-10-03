@@ -32,7 +32,10 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
 
   late final ValueNotifier<List<Event>> _selectedEvents;
-  late final _kEvents;
+  late final _kEvents = LinkedHashMap<DateTime, List<Event>>(
+    equals: isSameDay,
+    hashCode: getHashCode,
+  );
   late final Map<DateTime,List<Event>> _kEventSource = {};
 
   DateTime _focusedDay = DateTime.now();
@@ -90,10 +93,7 @@ class _MainScreenState extends State<MainScreen> {
               else _kEventSource[date]!.add(Event(item.customerName!,item.jobUuid!));
             }
           }
-          _kEvents = LinkedHashMap<DateTime, List<Event>>(
-            equals: isSameDay,
-            hashCode: getHashCode,
-          )..addAll(_kEventSource);
+          _kEvents.addAll(_kEventSource);
         }
         else return;
       } catch(e){

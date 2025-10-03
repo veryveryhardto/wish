@@ -228,6 +228,7 @@ class _NoteListPageState extends State<NoteListPage> {
                             ],
                               onSelectChanged: (selected){
                                 if(selected!) NoteDialog().show(context, note:Data(
+                                    noticeUuid: _lastList.data![index].noticeUuid!,
                                     noticeBody: _lastList.data![index].noticeBody??'내용',
                                     noticeTitle: _lastList.data![index].noticeTitle??'null',
                                     createdBy: _lastList.data![index].createdBy??'null',
