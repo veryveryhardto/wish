@@ -235,8 +235,10 @@ class _MemberListPageState extends State<MemberListPage> {
                               DataCell(Text(_lastlist[index].affiliation??'')),
                               DataCell(Text(_lastlist[index].phone??'null')),
                             ],
-                              onSelectChanged: (selected){
-                              if(selected!) RoleModify(_lastlist[index].role!,_lastlist[index].userUuid!,index,user);
+                              onSelectChanged: (selected) async{
+                              if(selected!) {
+                                RoleModify(_lastlist[index].role!,_lastlist[index].userUuid!,index,user);
+                              }
                               },
                             ))),
                       )

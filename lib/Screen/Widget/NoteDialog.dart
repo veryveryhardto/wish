@@ -54,7 +54,7 @@ class NoteDialog {
                         Text(title.text,style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
                         _isCreatedBy?IconButton(onPressed: () async {
                           var value = await Delete(context,note!.noticeUuid!);
-                          if(value=='true'){
+                          if(value==true){
                             CustomToast('공지를 삭제했습니다.', context);
                             Navigator.of(context).pop();
                             notice.noteList.data!.removeWhere((e)=>e.noticeUuid==note!.noticeUuid);
@@ -152,7 +152,7 @@ class NoteDialog {
                             if(_formKey.currentState!.validate()){
                               Indicator().show(context);
                               var json = await Service().Fetch(note.toJson(), 'patch', '/api/notices/${note!.noticeUuid}',await Token().AccessRead());
-                              try {
+                              /*try {
                                 var data = Message.fromJson(json);
                                 if(data.code=='success'){
                                   Indicator().dismiss();
@@ -172,6 +172,19 @@ class NoteDialog {
                                 Indicator().dismiss();
                                 print(e);
                               }
+
+                               */
+          var data = Message.fromJson(json);
+          if(data.code=='success'){
+          Indicator().dismiss();
+          CustomToast('공지가 수정되었습니다.', context);
+          var json2 =await Service().Fetch('', 'get', '/api/notices',);
+          var data = NoteList.fromJson(json2);
+          if(data.code=='success'&&data.data!=null&&data.data!.length>0){
+          notice.setNoteList=data;
+          notice.setNoteData(data,context);
+          }
+          Navigator.of(_context).pop();}
                             }
                           }:()=>setState(()=>_modify=true),
                           child: Text(create?'생성하기':'수정하기')),
@@ -200,6 +213,7 @@ class NoteDialog {
   }
 
   Delete(BuildContext context,String noteID) async{
+    bool success = false;
     await showDialog(
       context: context,
       builder: (context) =>
@@ -225,7 +239,8 @@ class NoteDialog {
                         var data = Message.fromJson(json);
                         if (data.code == 'success') {
                           Indicator().dismiss();
-                          Navigator.pop(context,'true');
+                          success=true;
+                          Navigator.pop(context,);
                         }
                         else
                           CustomToast('삭제하지 못했습니다.', context);
@@ -249,11 +264,11 @@ class NoteDialog {
                     ),
                     child: Text("취소", style: TextStyle(
                       fontSize: 20, color: Color(0xff50C7E1),),),
-                    onPressed: () => Navigator.pop(context,''),
+                    onPressed: () => Navigator.pop(context,),
                   ),
                 ),
               ],),
           ),
-    );
+    ).then((value)=>success);
   }
 }

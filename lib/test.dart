@@ -3,12 +3,145 @@
 
 //@JS()
 //external JSPromise execDaumPostcode();
-void main(){
-  List<int> list = [1,2,3,4,5];
-  var list2=list.where((e){
-    return e<2;
-    //else return null;
-  });
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+void main() async {
+
+
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: false,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xff50C7E1),
+              foregroundColor: Colors.white,
+            )
+        ),
+        primaryColor: Color(0xff50C7E1),
+        scaffoldBackgroundColor: Color(0xffF9F9F9),
+      ),
+      home: SampleScreen(),
+    );
+  }
+}
+
+class SampleScreen extends StatelessWidget {
+  const SampleScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          DialogOpenBtn(
+            openDialog: () async{ var text = await alertDialog(context);
+              print(text);},
+            btnName: 'Alert Dialog',
+          ),
+          DialogOpenBtn(
+            openDialog: () => cupertinoDialog(context),
+            btnName: 'Cupertino Dialog',
+          ),
+        ],
+      ),
+    );
+  }
+
+  showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
+  alertDialog(BuildContext context) {
+    bool istrue = false;
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('AlertDialog Title'),
+            content: const Text('Sample AlertDialog'),
+            actions: [
+              TextButton(
+                onPressed: (){
+                  istrue = true;
+                  Navigator.pop(context);
+                  },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  istrue = false;
+                  Navigator.pop(context);},
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        }).then((value) => istrue);
+  }
+
+  cupertinoDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: const Text('CupertinoAlertDialog Title'),
+            content: const Text('Sample CupertinoAlertDialog'),
+            actions: [
+              CupertinoButton(
+                onPressed: () => Navigator.pop(context, 'Cupertino Cancel'),
+                child: const Text('Cancel'),
+              ),
+              CupertinoButton(
+                onPressed: () => Navigator.pop(context, 'Cupertino OK'),
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        }).then((value) => showSnackBar(context, value));
+  }
+}
+
+class DialogOpenBtn extends StatelessWidget {
+  final VoidCallback openDialog;
+  final String btnName;
+
+  const DialogOpenBtn({
+    Key? key,
+    required this.openDialog,
+    required this.btnName,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20.0,
+        vertical: 10.0,
+      ),
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: openDialog,
+        child: Text(
+          btnName,
+        ),
+      ),
+    );
+  }
 }
 /*
 class MyApp extends StatelessWidget {
