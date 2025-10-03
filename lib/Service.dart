@@ -15,7 +15,7 @@ class Service{
     };
     http.Response response;
     debugPrint(token);
-    debugPrint(data);
+    debugPrint(data.toString());
     debugPrint(url+link);
 
     try {
@@ -39,7 +39,7 @@ class Service{
           return false;
       }
     } catch(e){
-      debugPrint(e as String);
+      debugPrint(e.toString());
       return e;
     }
 

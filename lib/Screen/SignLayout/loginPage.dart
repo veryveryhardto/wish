@@ -102,10 +102,9 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
                         }
                         */
-                        print(data.data!.user!.role!);
                         user.setRoll = data.data!.user!.role!;
                         user.setUUID = data.data!.user!.userUuid!;
-                        await Token().Write(data);
+                        await Token().Write(data,user.uuid,user.role);
                         CustomToast('로그인에 성공했습니다.', context);
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
                       }

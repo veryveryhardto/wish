@@ -1,3 +1,4 @@
+import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish/Provider/JobProvider.dart';
@@ -13,6 +14,7 @@ import '../Model/Note/NoteList.dart';
 import '../Model/Token.dart';
 import '../Provider/UserProvider.dart';
 import '../Service.dart';
+import 'mainScreen.dart';
 
 class MainScreen_Customer extends StatefulWidget {
   const MainScreen_Customer({super.key,});
@@ -23,27 +25,38 @@ class MainScreen_Customer extends StatefulWidget {
 
 class _MainScreen_CustomerState extends State<MainScreen_Customer> {
 
+  PaginatorController? _controller;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _controller = PaginatorController()..addListener((){setState(() {});});
+
     WidgetsBinding.instance.addPostFrameCallback((_)=>Notice());
   }
 
   Future<void> Notice() async{
     NoteProvider note=Provider.of<NoteProvider>(context,listen: false);
-    var json=await Service().Fetch('', 'get', '/api/notices',);
-    if(json==false) return;
-    else {
-      try {
-        var data = NoteList.fromJson(json);
-        if(data.code=='success'&&data.data!=null&&data.data!.length>0){
-          note.setNoteList=data;
-          note.setNoteData(data,context);
+    JobProvider job=Provider.of<JobProvider>(context,listen: false);
+
+    var json2=await Service().Fetch('', 'get', '/api/staff/jobs',await Token().AccessRead());
+    if(json2!=false&&json2['code']=='success') {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()),);
+    }
+    else{
+      var json=await Service().Fetch('', 'get', '/api/notices',);
+      if(json==false) return;
+      else {
+        try {
+          var data = NoteList.fromJson(json);
+          if(data.code=='success'&&data.data!=null&&data.data!.length>0){
+            note.setNoteList=data;
+            note.setNoteData(data,context);
+          }
+          else return;
+        } catch(e){
+          debugPrint(e as String);
         }
-        else return;
-      } catch(e){
-        debugPrint(e as String);
       }
     }
   }
@@ -132,27 +145,52 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
         child: Text('공지사항',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
       ),
       Container(
+        height: 350,
+        //padding: EdgeInsets.only(bottom: 25),
         margin: EdgeInsets.only(bottom: 10),
         decoration: const BoxDecoration(
           //  color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        child: note.noteList.code=='success'&&note.noteList.data!=null&&note.noteList.data!.length>0?
-        PaginatedDataTable(
+        child: PaginatedDataTable2(
           source: note.noteData!,
+          empty: Center(child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Text('공지가 없습니다.'))),
           columns: const [
-            DataColumn(label: Text('')),
-            DataColumn(label: Text(''),numeric: true)
+            DataColumn2(label: Text(''),size: ColumnSize.L),
+            DataColumn2(label: Text(''),numeric: true,size: ColumnSize.S)
           ],
+          autoRowsToHeight: true,
+          controller: _controller,
           headingRowHeight : 20,
-          rowsPerPage: 10,
-          dataRowMinHeight: 30,
-          dataRowMaxHeight: 30,
-          dividerThickness: 0.0001,
+          rowsPerPage: 5,
+          dataRowHeight: 30,
+          dividerThickness: 0,
+          hidePaginator: true,
           showCheckboxColumn: false,
-        ):Center(child: Padding(
-          padding: EdgeInsets.all(20),
-            child: Text('공지가 없습니다.')))
+        )
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+              onPressed: () => _controller!.goToFirstPage(),
+              icon: const Icon(Icons.keyboard_double_arrow_left),color: Color(0xff50C7E1),),
+          IconButton(
+              onPressed: () => _controller!.goToPreviousPage(),
+              icon: const Icon(Icons.keyboard_arrow_left),color: Color(0xff50C7E1),),
+          Text(_controller!.isAttached
+              ? '${1 + ((_controller!.currentRowIndex + 1) / _controller!.rowsPerPage).floor()}페이지 / '
+              '${(_controller!.rowCount / _controller!.rowsPerPage).ceil()}'
+              : 'Page: x of y'),
+          IconButton(
+              onPressed: () => _controller!.goToNextPage(),
+              icon: const Icon(Icons.keyboard_arrow_right),color: Color(0xff50C7E1),),
+          IconButton(
+              onPressed: () => _controller!.goToLastPage(),
+              icon: const Icon(Icons.keyboard_double_arrow_right),color: Color(0xff50C7E1),)
+        ],
       )
     ],
   );

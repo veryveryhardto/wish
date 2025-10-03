@@ -8,6 +8,7 @@ import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
 
 import '../../Model/Jobs/jobDetail.dart'as detail;
+import '../../Model/Memo/memoList.dart' as memoList;
 import '../../Provider/JobProvider.dart';
 import '../../Service.dart';
 import 'jobDetail.dart';
@@ -33,7 +34,7 @@ class _JobListState extends State<JobList> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    JobProvider job=Provider.of<JobProvider>(context);
+    JobProvider job=Provider.of<JobProvider>(context,listen: false);
     _lastlist = jobList.JobList.fromJson(job.jobList.toJson()).data??[];
   }
 
@@ -160,7 +161,7 @@ class _JobListState extends State<JobList> {
                       ),
                     ],
                     rows: List<DataRow>.generate( _lastlist.length, (index) => DataRow(cells: [
-                      DataCell(Text(_lastlist[index].jobScheduledAt==null?'미정':_lastlist[index].jobScheduleTime.toString().substring(0,10))),
+                      DataCell(Text(_lastlist[index].jobScheduledAt==null||_lastlist[index].jobScheduledAt=="null"?'미정':_lastlist[index].jobScheduleTime.toString().substring(0,10))),
                       DataCell(Text(_lastlist[index].customerName??'')),
                       DataCell(Text(_lastlist[index].customerPhone??'미정')),
                       DataCell(Text(_lastlist[index].jobCategoryName??'')),
@@ -179,6 +180,7 @@ class _JobListState extends State<JobList> {
                               debugPrint(e as String);
                             }
                           }
+
                         }
 
                         /*

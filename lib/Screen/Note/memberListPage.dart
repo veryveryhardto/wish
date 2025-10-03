@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:js_interop';
 
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class MemberListPage extends StatefulWidget {
 
 class _MemberListPageState extends State<MemberListPage> {
 
-  TextEditingController _role = TextEditingController();
+  TextEditingController _role = TextEditingController()..text='고객';
   TextEditingController _name = TextEditingController();
 
   List<member.Items> _lastlist = [];
@@ -66,7 +67,7 @@ class _MemberListPageState extends State<MemberListPage> {
 
   @override
   Widget build(BuildContext context) {
-    UserProvider user =Provider.of<UserProvider>(context);
+    UserProvider user = Provider.of<UserProvider>(context);
     NoteProvider note = Provider.of<NoteProvider>(context);
 
     return Scaffold(
@@ -255,7 +256,7 @@ class _MemberListPageState extends State<MemberListPage> {
   }
 
   RoleModify(int role,String uuid,int index,UserProvider user) {
-    TextEditingController roleName = TextEditingController();
+    TextEditingController roleName = TextEditingController()..text=member.memberRole[role];
     return showDialog(
       context: context,
       builder: (context){
@@ -276,10 +277,10 @@ class _MemberListPageState extends State<MemberListPage> {
                       child: Text("변경하기",style: TextStyle(fontSize: 20),),
                       onPressed: () async{
                         Indicator().show(context);
-                        var _json = await Service().Fetch('''
-                        {
-                          "newRoleClass" : ${member.memberRole.indexOf(roleName.text)},
-                        }''', 'patch', '/api/admin/users/${uuid}/role',await Token().AccessRead());
+                        Map<String,String> _roleModify = {
+                          "newRoleClass" : member.memberRole.indexOf(roleName.text).toString(),
+                        };
+                        var _json = await Service().Fetch(_roleModify, 'patch', '/api/admin/users/${uuid}/role',await Token().AccessRead());
                         try {
                           var data = Message.fromJson(_json);
                           if(data.code=='success'){

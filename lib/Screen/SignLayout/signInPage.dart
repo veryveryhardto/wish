@@ -120,11 +120,11 @@ class _SignInPageState extends State<SignInPage> {
                     if(_formKey.currentState!.validate()){
                       Indicator().show(context);
                       var json = await Service().Fetch(SignUp(
-                        loginId:idController.text,
-                        password: sha256.convert(utf8.encode(passwordController.text)).toString(),
-                        name: nameController.text,
-                        phone: phoneController.text,
-                        affiliation: affiliationController.text
+                          loginId:idController.text,
+                          password: sha256.convert(utf8.encode(passwordController.text)).toString(),
+                          name: nameController.text,
+                          phone: phoneController.text,
+                          affiliation: affiliationController.text
                       ).toJson(), 'put', '/api/auth/sign-up');
                       try {
                         var data = Message.fromJson(json);

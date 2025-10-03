@@ -1,7 +1,9 @@
+import 'package:intl/intl.dart';
+
 class MemoList {
   String? code;
   String? message;
-  List<Data>? data;
+  List<Data>? data = [];
 
   MemoList({this.code, this.message, this.data});
 
@@ -30,7 +32,7 @@ class MemoList {
 class Data {
   String? memoUuid;
   String? content;
-  String? createdAt;
+  DateTime? createdAt;
   String? writerUuid;
   String? writerName;
 
@@ -44,7 +46,7 @@ class Data {
   Data.fromJson(Map<String, dynamic> json) {
     memoUuid = json['memoUuid'];
     content = json['content'];
-    createdAt = json['createdAt'];
+    createdAt = DateTime.parse(json['createdAt']);
     writerUuid = json['writerUuid'];
     writerName = json['writerName'];
   }
@@ -53,7 +55,7 @@ class Data {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['memoUuid'] = this.memoUuid;
     data['content'] = this.content;
-    data['createdAt'] = this.createdAt;
+    data['createdAt'] = this.createdAt.toString();
     data['writerUuid'] = this.writerUuid;
     data['writerName'] = this.writerName;
     return data;

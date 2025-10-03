@@ -88,7 +88,6 @@ class _JobList_CustomerState extends State<JobList_Customer> {
                           CustomTextField(textController: _phone, title: '전화번호',
                             onChnaged: (val)=>setState(()=>_phoneChanged=true),
                             validator: (val){
-                            print(val);
                               if(val!.length == 0 ) return '전화번호를 작성해 주세요';
                               else if (!validator.phone(val!)) return '전화번호를 정확히 작성해 주세요';
                               else return null;
@@ -222,7 +221,7 @@ class _JobList_CustomerState extends State<JobList_Customer> {
     );
   }
   Widget LoginButton(BuildContext context)=>Padding(
-    padding: const EdgeInsets.only(right: 15),
+    padding: const EdgeInsets.all(10),
     child: ElevatedButton(
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.all(15),

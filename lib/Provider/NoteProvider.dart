@@ -53,7 +53,8 @@ class NoteData extends DataTableSource{
             createdAt: celldata[index].createdAt),
         );
       });
-    });
+    }
+    );
   }
 
   @override

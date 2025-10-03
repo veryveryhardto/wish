@@ -7,9 +7,9 @@ class CustomDropdown extends StatefulWidget {
   final List<String> list;
   final FormFieldValidator<String>? validator;
   final List<TextInputFormatter>? textInputFormatter;
-  final TextInputType? textInputType;
+  final ValueChanged<String?>? onChanged;
   bool? readOnly = false;
-  CustomDropdown ({super.key, required this.textController, required this.title, required this.list, this.validator, this.readOnly, this.textInputFormatter, this.textInputType});
+  CustomDropdown ({super.key, required this.textController, required this.title, required this.list, this.validator, this.readOnly, this.textInputFormatter, this.onChanged});
 
   @override
   State<CustomDropdown> createState() => _CustomDropdownState();
@@ -18,7 +18,7 @@ class CustomDropdown extends StatefulWidget {
 class _CustomDropdownState extends State<CustomDropdown> {
 
   late TextEditingController controller = widget.textController;
-  String? _selectedItem;
+  late String _selectedItem = widget.textController.text;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: DropdownButton(
-            value: _selectedItem,
+
+            value:controller.text,
             isExpanded: true,
             underline: SizedBox(),
             items: widget.list.map((String value) {
@@ -49,11 +50,10 @@ class _CustomDropdownState extends State<CustomDropdown> {
               );
             }).toList(),
             icon: Icon(Icons.arrow_drop_down, color: Colors.black,),
-            onChanged: (val) {
+            onChanged: widget.onChanged??(val) {
               setState(() {
-                _selectedItem = val;
+                controller.text = val.toString();
               });
-              controller.text = val??'';
             },
           ),
         ),

@@ -24,6 +24,11 @@ class JobProvider with ChangeNotifier{
     notifyListeners();
   }
 
+  set setMemoList (MemoList memolist){
+    memoList=memolist;
+    notifyListeners();
+  }
+
   AddMemo(var memo){
     memoList.data!.add(memo);
     notifyListeners();

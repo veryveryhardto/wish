@@ -127,7 +127,7 @@ class NoteDialog {
                           onPressed: create?() async {
                             if(_formKey.currentState!.validate()){
                               Indicator().show(context);
-                              var json = await Service().Fetch(<String,String>{
+                              var json = await Service().Fetch({
                                 "title": title.text,
                                 "body" : body.text,
                               }, 'post', '/api/notices',await Token().AccessRead());
@@ -155,7 +155,7 @@ class NoteDialog {
                           }:_modify?() async {
                             if(_formKey.currentState!.validate()){
                               Indicator().show(context);
-                              var json = await Service().Fetch(jsonEncode(note?.toJson()), 'patch', '/api/notices/${note!.noticeUuid}',await Token().AccessRead());
+                              var json = await Service().Fetch(note?.toJson(), 'patch', '/api/notices/${note!.noticeUuid}',await Token().AccessRead());
                               try {
                                 var data = Message.fromJson(json);
                                 if(data.code=='success'){
