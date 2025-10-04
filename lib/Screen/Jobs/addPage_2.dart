@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wish/Model/Jobs/jobs.dart';
 import 'package:wish/Model/Token.dart';
+import 'package:wish/Screen/Jobs/jobDetail.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customDropdown.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
@@ -147,6 +149,9 @@ class _AddPage_2State extends State<AddPage_2> {
                         onPressed: () async {
                           if(_formKey.currentState!.validate()){
                             Indicator().show(context);
+                            job.addJob = Jobs(
+
+                            );
                             var json = await Service().Fetch(job.addJob.toJson(), 'post', '/api/public/jobs',Token().AccessRead());
                             try {
                               var data = Message.fromJson(json);
