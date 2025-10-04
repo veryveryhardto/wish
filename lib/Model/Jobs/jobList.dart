@@ -38,8 +38,8 @@ class Data {
   String? jobCategoryName;
   String? customerName;
   String? customerPhone;
-  Null? managerName;
-  Null? jobManagerUuid;
+  String? managerName;
+  String? jobManagerUuid;
 
   get jobStatusName {
     switch(jobStatus){

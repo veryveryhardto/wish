@@ -4,10 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:wish/Model/Memo/memoList.dart' as memoList;
 import 'package:wish/Model/Jobs/jobList.dart' as jobList;
+import 'package:wish/Model/User/memberlist.dart' as memberList;
 import 'package:wish/Model/User/signIn.dart';
 import 'package:wish/Provider/JobProvider.dart';
 import 'package:wish/Provider/UserProvider.dart';
 import 'package:wish/Screen/Jobs/jobDetail_customer.dart';
+import 'package:wish/Screen/Jobs/memberList(assign).dart';
 import 'package:wish/Screen/SignLayout/loginPage.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customDropdown.dart';
@@ -165,34 +167,83 @@ class _JobDetailState extends State<JobDetail> {
         Flexible(child: CustomDropdown(textController: _status, title: '신청상태', list:jobList.jobStatusList,
           readOnly: user.role>1?false:true,
           onChanged: (val) async{
+            if(val.toString()=='반려'){
+              if(_status.text == val.toString()) return;
+              else {
+                var _reject = await Reject(context,job.currentJob.jobUuid);
+                print(_reject);
+                if(_reject) {
+                  setState(() {
+                   _status.text = val.toString();
+                  });
+               }}
+            }
+            else {
+              Indicator().show(context);
+              Map<String,String> _jobStatus = {
+                "toStatus" : jobList.jobStatusList.indexOf(val.toString()).toString(),
+              };
+              var json = await Service().Fetch(_jobStatus, 'post', '/api/staff/jobs/${job.currentJob.jobUuid}/status',await Token().AccessRead());
+              try {
+                var data = Message.fromJson(json);
+                if (data.code == 'success'){
+                  Indicator().dismiss();
+                  CustomToast('수정되었습니다.', context);
+                }
+              } catch (e) {
+                debugPrint(e as String);
+                Indicator().dismiss();
+                CustomToast('수정되지 않았습니다.', context);
+              }
+
+              setState(() {
+                _status.text = val.toString();
+              });
+            }
+          }
+
+        ),),
+      ],),
+      CustomTextField(data: job.currentJob.managerName, title: '담당자명', readOnly: true,
+        onTap: () async {
+          var _member = await Navigator.push(context, MaterialPageRoute(builder: (context) => MemberList_Assign()));
+          if(_member.runtimeType==memberList.Items){
             Indicator().show(context);
-            print('text');
-            Map<String,String> _jobStatus = {
-              "toStatus" : jobList.jobStatusList.indexOf(val.toString()).toString(),
+            Map<String,String> _assign = {
+              "managerUuid" : _member.userUuid,
             };
-            var json = await Service().Fetch(_jobStatus, 'post', '/api/staff/jobs/${job.currentJob.jobUuid}/status',await Token().AccessRead());
+            var json = await Service().Fetch(_assign, 'post', '/api/staff/jobs/${job.currentJob.jobUuid}/assign',await Token().AccessRead());
             try {
               var data = Message.fromJson(json);
               if (data.code == 'success'){
                 Indicator().dismiss();
-                CustomToast('수정되었습니다.', context);
+                CustomToast('담당되었습니다.', context);
               }
             } catch (e) {
-              debugPrint(e as String);
+              debugPrint(e.toString());
               Indicator().dismiss();
-              CustomToast('수정되지 않았습니다.', context);
+              CustomToast('담당되지 않았습니다.', context);
             }
+
+            setState(() {});
+          }
+        },
+      ),
+      CustomTextField(data: job.currentJob.jobScheduledAt, title: '예약일', readOnly: true,
+        onTap: () async {
+          DateTime initialDay = DateTime.now();
+          final DateTime? dateTime = await showDatePicker(
+              context: context,
+              initialDate: initialDay,
+              firstDate: DateTime.now(),
+              lastDate: DateTime(DateTime.now().year+1));
+          if (dateTime != null) {
             setState(() {
-              _status.text = val.toString();
+              initialDay = dateTime;
             });
           }
-        ),),
-      ],),
-      Row(children: [
-        Flexible(child: CustomTextField(data: job.currentJob.managerName, title: '담당자명', )),
-        SizedBox(width: 10,),
-        Flexible(child: CustomTextField(data: job.currentJob.jobScheduledAt, title: '예약일', readOnly: true, )),
-      ],),
+        },
+      ),
       Align(
         alignment: Alignment.centerLeft,
         child: Text('요청사항', style: TextStyle(
@@ -264,7 +315,6 @@ class _JobDetailState extends State<JobDetail> {
                   trailing: Text('${job.memoList.data![index].writerName}',style: TextStyle(color: user.uuid==job.memoList.data![index].writerUuid?Color(0xff50C7E1):Colors.black),),
                   onTap: user.uuid==job.memoList.data![index].writerUuid?() async {
                     var _isTrue = await MemoModify(user, job, index);
-                    print(_isTrue);
                     if(_isTrue=='delete') job.memoList.data!.removeAt(index);
                     if(_isTrue=='modify'||_isTrue=='delete') setState(() {});
                   }:null
@@ -442,9 +492,8 @@ class _JobDetailState extends State<JobDetail> {
                       child: Text("메모 삭제",style: TextStyle(fontSize: 20),),
                       onPressed: () async {
                         var _delete = await Delete(context, job.memoList.data![index].memoUuid!);
-                        print(_delete);
-                        if(_delete) {
-                          _mod = 'delete';
+                        if(_delete=='delete') {
+                          _mod = _delete;
                           Navigator.pop(context,_mod);
                         }
                       },
@@ -471,9 +520,10 @@ class _JobDetailState extends State<JobDetail> {
     ).then((value)=>_mod);
   }
 
-Delete(BuildContext context,String noteID) async{
-  String success = "false";
-  await showDialog(
+Delete(BuildContext context,String memoID) async{
+  String success = "not delete";
+
+  return showDialog(
     context: context,
     builder: (context) =>
         AlertDialog(
@@ -491,13 +541,13 @@ Delete(BuildContext context,String noteID) async{
                   child: Text("삭제", style: TextStyle(fontSize: 20),),
                   onPressed: () async {
                     Indicator().show(context);
-                    var json = await Service().Fetch('', 'delete', '/api/jobs/$noteID/memos',
+                    var json = await Service().Fetch('', 'delete', '/api/jobs/$memoID/memos',
                         await Token().AccessRead());
                     try {
                       var data = Message.fromJson(json);
                       if (data.code == 'success') {
                         Indicator().dismiss();
-                        success="true";
+                        success="delete";
                         Navigator.pop(context,success);
                       }
                       else
@@ -529,4 +579,102 @@ Delete(BuildContext context,String noteID) async{
         ),
   ).then((value)=>success);
 }
+  Reject(BuildContext context,String jobUUID) async{
+    bool success = false;
+    TextEditingController _reason = TextEditingController();
+
+    return showDialog(
+      context: context,
+      builder: (context) =>
+          AlertDialog(
+            title: Text('작업 반려', style: TextStyle(color: Color(0xff50C7E1),)),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('반려사유', style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Color(0xff50C7E1)),),),
+                SizedBox(height: 5,),
+                Container(
+                  child: TextFormField(
+                    textAlignVertical: TextAlignVertical.top,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      filled: true,
+                      fillColor: Color(0xfff5f5f5),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderSide: BorderSide.none
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderSide: BorderSide(
+                            width: 2,
+                            color: Color(0xff50C7E1),
+                          )
+                      ),
+                    ),
+                    controller: _reason,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                  ),
+                ),
+                SizedBox(height: 20,),
+                Container(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 15),),
+                    child: Text("확인",style: TextStyle(fontSize: 20),),
+                    onPressed: () async {
+                      Indicator().show(context);
+                      Map<String,String> _reject = {
+                        "content" : _reason.text,
+                      };
+                      var json = await Service().Fetch(_reject, 'post', '/api/staff/jobs/$jobUUID/reject',
+                          await Token().AccessRead());
+                      if (json == false)
+                        return;
+                      else {
+                        try {
+                          var data = Message.fromJson(json);
+                          if (data.code == 'success') {
+                            success = true;
+                            Navigator.pop(context,success);
+                            Indicator().dismiss();
+                            CustomToast('작업이 반려되었습니다.', context);
+                          }
+                          else {
+                            Indicator().dismiss();
+                            CustomToast('작업이 반려되지 않았습니다.', context);
+                          }
+                        } catch (e) {
+                          debugPrint(e as String?);
+                          Indicator().dismiss();
+                          CustomToast('잘못된 접근입니다.', context);
+                        }
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      side: BorderSide(color: const Color(0xff50C7E1),),
+                      //textStyle: TextStyle(fontSize:double.parse(font.small))
+                    ),
+                    child: Text("취소", style: TextStyle(
+                      fontSize: 20, color: Color(0xff50C7E1),),),
+                    onPressed: () => Navigator.pop(context,success),
+                  ),
+                ),
+              ],),
+          ),
+    ).then((value)=>success);
+  }
 }

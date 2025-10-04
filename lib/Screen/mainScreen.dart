@@ -69,6 +69,7 @@ class _MainScreenState extends State<MainScreen> {
     var json=await Service().Fetch('', 'get', '/api/notices',);
     var json2=await Service().Fetch('', 'get', '/api/staff/jobs',await Token().AccessRead());
     if(json==false||json2==false) return;
+
     else {
       try {
         var data = NoteList.fromJson(json);
@@ -81,6 +82,7 @@ class _MainScreenState extends State<MainScreen> {
 
         if(data2.code=='success'&&data2.data!=null&&data2.data!.length>0) {
           job.setJobList=data2;
+          print(job.jobList.toJson());
           if(job.jobList.data!=null){
             for(var item in job.jobList.data!){
               if(item.jobScheduleTime==null) continue;
@@ -93,7 +95,7 @@ class _MainScreenState extends State<MainScreen> {
         }
         else return;
       } catch(e){
-        debugPrint(e as String);
+        debugPrint(e.toString());
       }
     }
   }

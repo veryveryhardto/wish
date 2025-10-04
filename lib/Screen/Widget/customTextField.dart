@@ -9,8 +9,9 @@ class CustomTextField extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final List<TextInputFormatter>? textInputFormatter;
   final TextInputType? textInputType;
+  final GestureTapCallback? onTap;
   bool? readOnly = false;
-  CustomTextField({super.key, this.textController, required this.title, this.onChnaged, this.validator, this.readOnly, this.textInputFormatter, this.textInputType, this.data});
+  CustomTextField({super.key, this.textController, required this.title, this.onChnaged, this.validator, this.readOnly, this.textInputFormatter, this.textInputType, this.data, this.onTap});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -49,6 +50,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 )
             ),
           ),
+          onTap: widget.onTap,
           autovalidateMode: widget.title.contains('비밀번호') ? AutovalidateMode.onUserInteraction:AutovalidateMode.disabled,
           inputFormatters: widget.textInputFormatter,
           obscureText: widget.title.contains('비밀번호') ? true : false,

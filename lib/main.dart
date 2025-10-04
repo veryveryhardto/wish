@@ -3,9 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:wish/Provider/JobProvider.dart';
 import 'package:wish/Provider/UserProvider.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:wish/Screen/Jobs/addPage_2.dart';
-import 'package:wish/Screen/Jobs/JobList_Customer.dart';
 import 'package:wish/Screen/mainScreen(customer).dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'Provider/NoteProvider.dart';
 
@@ -30,6 +29,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('ko','KR'),
+      ],
       theme: ThemeData(
         useMaterial3: false,
         elevatedButtonTheme: ElevatedButtonThemeData(
