@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish/Model/Jobs/jobs.dart';
 import 'package:wish/Model/Token.dart';
-import 'package:wish/Screen/Jobs/jobDetail.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customDropdown.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
@@ -12,12 +12,15 @@ import 'package:wish/Screen/mainScreen(customer).dart';
 import 'package:wish/Screen/oneContainer.dart';
 import 'package:kpostal/kpostal.dart';
 
+import '../../Model/Jobs/addressData.dart';
 import '../../Model/message.dart';
 import '../../Provider/JobProvider.dart';
 import '../../Service.dart';
 import '../Widget/Indicator.dart';
 import '../Widget/customToast.dart';
 
+@JS("execDaumPostcode")
+external JSPromise execDaumPostcode();
 
 class AddPage_2 extends StatefulWidget {
   const AddPage_2({super.key,});
@@ -31,7 +34,7 @@ class _AddPage_2State extends State<AddPage_2> {
 
   TextEditingController _address = TextEditingController();
   TextEditingController _addressDetail = TextEditingController();
-  TextEditingController _category = TextEditingController();
+  TextEditingController _category = TextEditingController()..text='카테고리1';
   TextEditingController _requestNote = TextEditingController();
 
   @override
@@ -50,63 +53,66 @@ class _AddPage_2State extends State<AddPage_2> {
                 children: [
                   Text('시공 정보',style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
                   SizedBox(height: 30,),
-                  Text('시공 위치', style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Color(0xff50C7E1)),),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('시공 위치', style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Color(0xff50C7E1)),),
+                  ),
                   SizedBox(height: 5,),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 25),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.ideographic,
-                      children: [
-                        Flexible(
-                          flex: 7,
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Color(0xfff5f5f5),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                  borderSide: BorderSide.none
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                  borderSide: BorderSide(
-                                    width: 2,
-                                    color: Color(0xff50C7E1),
-                                  )
-                              ),
+                  Row(
+                    //crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.ideographic,
+                    children: [
+                      Flexible(
+                        flex: 7,
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0xfff5f5f5),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                                borderSide: BorderSide.none
                             ),
-                            controller: _address,
-                            validator: (val){
-                              if(val!.length<0) return '주소를 입력해 주세요.';
-                              return null;
-                            },
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                                borderSide: BorderSide(
+                                  width: 2,
+                                  color: Color(0xff50C7E1),
+                                )
+                            ),
+                          ),
+                          readOnly: true,
+                          controller: _address,
+                          validator: (val){
+                            if(val!.length<0) return '주소를 입력해 주세요.';
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 10,),
+                      Flexible(
+                        flex:3,
+                        fit:FlexFit.tight,
+                        child: Container(
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () async{
+                              var result = await execDaumPostcode().toDart;
+                              AddressData _addressData = AddressData.fromMap(jsonDecode(result.toString()));
+                              print(result.toString());
+                              setState(() {
+                                _address.text=_addressData.roadAddress;
+                                job.addJob.address!.address=_addressData.roadAddress;
+                                job.addJob.address!.post=int.parse(_addressData.zonecode);
+                              });
+                            } ,
+                            child: Text('주소 찾기',style: TextStyle(fontSize: 17,)),
                           ),
                         ),
-                        SizedBox(width: 10,),
-                        Flexible(
-                          flex:3,
-                          fit:FlexFit.tight,
-                          child: Container(
-                            child: ElevatedButton(
-                              onPressed: () async => await Navigator.push(context, MaterialPageRoute(
-                                builder: (_) => KpostalView(
-                                  callback: (Kpostal result) {
-                                    setState(() {
-                                      _address.text=result.address;
-                                      job.addJob.address!.address=result.address;
-                                      job.addJob.address!.post=int.parse(result.postCode);
-                                    });
-                                  },
-                                ),),),
-                              child: Text('주소 찾기',style: TextStyle(fontSize: 17,)),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
+                  SizedBox(height: 5,),
                   CustomTextField(textController: _addressDetail, title: '상세주소',),
                   CustomDropdown(textController: _category, title: '카테고리', list: ['카테고리1','카테고리2'],),
                   Align(
@@ -149,9 +155,7 @@ class _AddPage_2State extends State<AddPage_2> {
                         onPressed: () async {
                           if(_formKey.currentState!.validate()){
                             Indicator().show(context);
-                            job.addJob = Jobs(
-
-                            );
+                            job.addJob;
                             var json = await Service().Fetch(job.addJob.toJson(), 'post', '/api/public/jobs',Token().AccessRead());
                             try {
                               var data = Message.fromJson(json);
@@ -164,7 +168,7 @@ class _AddPage_2State extends State<AddPage_2> {
                             } catch(e){
                               CustomToast('잘못된 접근입니다.', context);
                               Indicator().dismiss();
-                              debugPrint(e as String);
+                              debugPrint(e.toString());
                             }
                           }
                         },

@@ -3,7 +3,7 @@ List<String> jobStatusList = ['신청','배정전','배정됨','작업중','작�
 
 class JobList {
   String? code;
-  List<Data>? data;
+  List<Data>? data = [];
 
   JobList({this.code, this.data});
 

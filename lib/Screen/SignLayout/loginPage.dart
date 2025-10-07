@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                     } catch(e){
                       CustomToast('잘못된 접근입니다.', context);
                       Indicator().dismiss();
-                      debugPrint(e as String);
+                      print(e);
                     }
                   }
 

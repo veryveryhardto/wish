@@ -1,7 +1,7 @@
 class JobDetail {
   String? code;
   String? message;
-  Data? data;
+  Data? data = Data();
 
   JobDetail({this.code, this.message, this.data});
 
@@ -35,7 +35,7 @@ class Data {
   String? customerPhone;
   String? jobManagerUuid;
   String? managerName;
-  JobAddress? jobAddress;
+  JobAddress? jobAddress = JobAddress();
   String? jobCreatedAt;
 
   get jobStatusName {

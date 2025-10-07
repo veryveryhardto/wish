@@ -3,7 +3,7 @@ List<String> memberRole = ['고객','현장담당자','본사담당자','Master'
 
 class MemberList {
   String? code;
-  Data? data;
+  Data? data = Data();
 
   MemberList({this.code, this.data});
 
@@ -26,7 +26,7 @@ class Data {
   int? total;
   int? limit;
   int? offset;
-  List<Items>? items;
+  List<Items>? items = [];
 
   Data({this.total, this.limit, this.offset, this.items});
 

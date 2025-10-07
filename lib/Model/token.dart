@@ -8,7 +8,7 @@ import '../Service.dart';
 
 class Token {
 
-  final _tokenStorage = const FlutterSecureStorage();
+  final _tokenStorage = FlutterSecureStorage();
   final Map<String, String> _key = {
     'accessTokenKey': 'secure_Access',
     'refreshTokenKey': 'secure_Refresh',
@@ -20,14 +20,14 @@ class Token {
     if(data==null||data.code=='failed') return 'failed';
     if(UUID!=null) await _tokenStorage.write(key: _key['UUIDKey']!, value: UUID);
     if(UUID!=role) await _tokenStorage.write(key: _key['roleKey']!, value: role.toString());
-    await _tokenStorage.write(key: _key['accessTokenKey']!, value: data.data?.accessToken);
-    await _tokenStorage.write(key: _key['refreshTokenKey']!, value: data.data?.refreshToken);
+    await _tokenStorage.write(key: _key['accessTokenKey']!, value: data.data?.accessToken??'');
+    await _tokenStorage.write(key: _key['refreshTokenKey']!, value: data.data?.refreshToken??'');
     return 'success';
   }
 
-  Future<dynamic> AccessRead() async => await _tokenStorage.read(key: _key['accessTokenKey']!);
-  Future<dynamic> RefreshRead() async => await _tokenStorage.read(key: _key['refreshTokenKey']!);
-  Future<dynamic> UUIDRead() async => await _tokenStorage.read(key: _key['UUIDKey']!);
+  Future<dynamic> AccessRead() async => await _tokenStorage.read(key: _key['accessTokenKey']!)??'';
+ Future<dynamic> RefreshRead() async => await _tokenStorage.read(key: _key['refreshTokenKey']!)??'';
+  Future<dynamic> UUIDRead() async => await _tokenStorage.read(key: _key['UUIDKey']!)??'';
   Future<dynamic> RoleRead() async => int.parse(await _tokenStorage.read(key: _key['roleKey']!)??'0');
 
   Delete() async {
@@ -38,18 +38,18 @@ class Token {
   }
 
   Future<dynamic> RefreshToken() async {
-    String? refreshToken = (await _tokenStorage.read(
-        key: _key['refreshTokenKey']!))!;
-    String? acceesToken = (await _tokenStorage.read(
-        key: _key['accessTokenKey']!))!;
-
+    String? refreshToken = await _tokenStorage.read(key: _key['refreshTokenKey']!)??'';
+    String? acceesToken = await _tokenStorage.read(key: _key['accessTokenKey']!)??'';
+/*
     Map<String, String> data = {
       "accessToken": "$acceesToken",
       "refreshToken": "$refreshToken"
     };
 
-    var Message = await Service().Fetch(data, 'post', '/api/auth/refresh',);
-    print(Message['code']);
+ */
+
+   // var Message = await Service().Fetch(data, 'post', '/api/auth/refresh',);
+  //  print(Message['code']);
     /*
     if (key == _key['refreshTokenKey']) {
 

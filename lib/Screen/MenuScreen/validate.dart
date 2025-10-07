@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_secure_storage_web/flutter_secure_storage_web.dart';
 import 'package:provider/provider.dart';
 import 'package:wish/Screen/MenuScreen/memberPage.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
@@ -27,7 +27,7 @@ class _ValidatePageState extends State<ValidatePage> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _passwordController = TextEditingController();
-  final _tokenStorage = const FlutterSecureStorage();
+  final _tokenStorage = FlutterSecureStorageWeb();
 
   @override
   void dispose() {
@@ -82,7 +82,9 @@ class _ValidatePageState extends State<ValidatePage> {
                           var data = Retrieve.fromJson(json);
                           Indicator().dismiss();
                           if(data.code=='success'){
-                            await _tokenStorage.write(key: 'pass', value: sha256.convert(utf8.encode(_passwordController.text)).toString());
+                            await _tokenStorage.write(key: 'pass', value: sha256.convert(utf8.encode(_passwordController.text)).toString(), options: {
+                              "wrapKey": "!!!!myWraKey!!!"
+                            });
                             Indicator().show(context);
                             var json = await Service().Fetch('', 'get', '/api/auth/me', await Token().AccessRead());
                             var data = Retrieve.fromJson(json);
@@ -100,7 +102,7 @@ class _ValidatePageState extends State<ValidatePage> {
                         } catch(e){
                           CustomToast('잘못된 접근입니다.', context);
                           Indicator().dismiss();
-                          debugPrint(e as String);
+                          debugPrint(e.toString());
                         }
                       }
                     },

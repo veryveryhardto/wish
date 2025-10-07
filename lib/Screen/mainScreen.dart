@@ -7,6 +7,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:wish/Model/Jobs/jobList.dart' as jobList;
 import 'package:wish/Screen/Note/memberListPage.dart';
 import 'package:wish/Screen/Note/noteListPage.dart';
+import 'package:universal_html/html.dart' as html;
 
 import 'package:wish/Screen/Widget/appBar.dart';
 
@@ -21,7 +22,7 @@ import '../Service.dart';
 import 'Jobs/jobDetail.dart';
 import 'Jobs/jobList.dart';
 import 'MenuScreen/menuScreen.dart';
-import 'dart:js' as js;
+import 'package:universal_html/html.dart' as html;
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key,});
@@ -32,6 +33,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
 
+  bool _init = false;
   PaginatorController? _controller;
   late final ValueNotifier<List<Event>> _selectedEvents;
   late final _kEvents = LinkedHashMap<DateTime, List<Event>>(
@@ -69,7 +71,6 @@ class _MainScreenState extends State<MainScreen> {
     var json=await Service().Fetch('', 'get', '/api/notices',);
     var json2=await Service().Fetch('', 'get', '/api/staff/jobs',await Token().AccessRead());
     if(json==false||json2==false) return;
-
     else {
       try {
         var data = NoteList.fromJson(json);
@@ -97,7 +98,9 @@ class _MainScreenState extends State<MainScreen> {
       } catch(e){
         debugPrint(e.toString());
       }
+
     }
+    setState(()=>_init=true);
   }
   int getHashCode(DateTime key) => key.day * 1000000 + key.month * 10000 + key.year;
   List<Event> _getEventsForDay(DateTime day) => _kEvents[day] ?? [];
@@ -208,7 +211,7 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: Colors.transparent, // 배경색 제거
         shadowColor: Colors.transparent, // 그림자 제거
       ),
-      onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
+      onPressed: ()=>html.window.open('https://linktr.ee/wish.clean','링크트리'),
       child: Image.asset('assets/image/ImageButton.png',),
     ),
   );

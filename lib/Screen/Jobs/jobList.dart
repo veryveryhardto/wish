@@ -35,7 +35,6 @@ class _JobListState extends State<JobList> {
     // TODO: implement initState
     super.initState();
     JobProvider job=Provider.of<JobProvider>(context,listen: false);
-    print(job.jobList.toJson());
     _lastlist = jobList.JobList.fromJson(job.jobList.toJson()).data??[];
   }
 
@@ -178,7 +177,7 @@ class _JobListState extends State<JobList> {
                               job.currentJobDetail=data;
                               Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail()));
                             } catch (e) {
-                              debugPrint(e as String);
+                              debugPrint(e.toString());
                             }
                           }
 

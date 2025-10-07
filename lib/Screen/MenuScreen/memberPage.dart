@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
 import 'package:wish/Screen/oneContainer.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_secure_storage_web/flutter_secure_storage_web.dart';
 
 import '../../Model/Token.dart';
 import '../../Model/message.dart';
@@ -24,11 +24,11 @@ class MemberPage extends StatefulWidget {
 
 class _MemberPageState extends State<MemberPage> {
 
+  FlutterSecureStorageWeb _tokenStorage = FlutterSecureStorageWeb();
   Token token = Token();
   bool _readOnly = true;
 
   final _formKey = GlobalKey<FormState>();
-  final _tokenStorage = const FlutterSecureStorage();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _password2Controller = TextEditingController();
   late TextEditingController _nameController;
@@ -139,7 +139,9 @@ class _MemberPageState extends State<MemberPage> {
                           if(data.code=='success'){
                             if(_phoneController.text.isNotEmpty){
                               Map<String,String> _password = {
-                                "currentPassword" : await _tokenStorage.read(key: 'pass')??'',
+                                "currentPassword" : await _tokenStorage.read(key: 'pass', options: {
+                                  "wrapKey": "!!!!myWraKey!!!"
+                                })??'',
                                 "newPassword" : sha256.convert(utf8.encode(_passwordController.text)).toString(),
                               };
                               var passwordjson = await Service().Fetch(_password, 'patch', '/api/auth/me/password', await token.AccessRead());
@@ -153,7 +155,9 @@ class _MemberPageState extends State<MemberPage> {
                             setState(()=>_readOnly=true);
                             _password2Controller.text='';
                             _passwordController.text='';
-                            await _tokenStorage.delete(key: 'pass');
+                            await _tokenStorage.delete(key: 'pass', options: {
+                              "wrapKey": "!!!!myWraKey!!!"
+                            });
                             CustomToast('회원정보를 변경했습니다.', context);
                             Indicator().dismiss();
                           }

@@ -18,7 +18,6 @@ class CustomDropdown extends StatefulWidget {
 class _CustomDropdownState extends State<CustomDropdown> {
 
   late TextEditingController controller = widget.textController;
-  late String _selectedItem = widget.textController.text;
 
   @override
   Widget build(BuildContext context) {

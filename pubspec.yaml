@@ -45,7 +45,7 @@ dependencies:
   find_address:
   toggle_switch:
   flutter_localization:
-  js:
+  universal_html:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -78,9 +78,6 @@ flutter:
     - assets/image/logo.png
     - assets/image/logo-banner.png
     - assets/image/ImageButton.png
-
-    - assets/html/daum_search.html
-    - assets/html/index.html
 
   # To add assets to your application, add an assets section, like this:
   # assets:

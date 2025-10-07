@@ -24,6 +24,7 @@ class _MemberList_AssignState extends State<MemberList_Assign> {
   TextEditingController _name = TextEditingController();
 
   List<member.Items> _lastlist = [];
+  bool _init = false;
 
   void initState() {
     // TODO: implement initState
@@ -33,24 +34,23 @@ class _MemberList_AssignState extends State<MemberList_Assign> {
   Future<void> Notice() async{
     UserProvider user=Provider.of<UserProvider>(context,listen: false);
 
-    var json=await Service().Fetch('', 'get', '/api/auth/users',await Token().AccessRead());
-    if(json==false) return;
-    else {
-      try {
-        var data = member.MemberList.fromJson(json);
-        if (data.code == 'success' && data.data != null &&
-            data.data!.total! > 0) {
-          user.memberList = data;
-          setState(() {
-            _lastlist = member.MemberList.fromJson(user.memberList.toJson()).data!.items!.where((e)=>e.role==1).toList();
-          });
-        }
-        else
-          return;
-      } catch (e) {
-        debugPrint(e as String);
+    try {
+      var json=await Service().Fetch('', 'get', '/api/auth/users',await Token().AccessRead());
+      if(json==false) return;
+      var data = member.MemberList.fromJson(json);
+      if (data.code == 'success' && data.data != null &&
+          data.data!.total! > 0) {
+        user.memberList = data;
+        setState(() {
+          _lastlist = member.MemberList.fromJson(user.memberList.toJson()).data!.items!.where((e)=>e.role==1).toList();
+        });
       }
+      else
+        return;
+    } catch (e) {
+      debugPrint(e.toString());
     }
+    setState(()=>_init=true);
   }
 
   bool _sortAscending = true;
@@ -85,7 +85,7 @@ class _MemberList_AssignState extends State<MemberList_Assign> {
     return Scaffold(
       appBar: CustomAppBar(title: '회원 목록',),
       body: Center(
-        child: Container(
+        child: !_init ? CircularProgressIndicator(color: Color(0xff50C7E1),): Container(
           margin: EdgeInsets.all(30),
           height: double.infinity,
           width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.width)*0.6,

@@ -6,7 +6,7 @@ import '../Screen/Widget/NoteDialog.dart';
 
 class NoteProvider with ChangeNotifier{
   NoteList noteList = NoteList();
-  NoteData? noteData;
+  NoteData noteData = NoteData();
 
   set setNoteList (NoteList note){
     if(noteList.data!=null){
@@ -26,8 +26,8 @@ class NoteProvider with ChangeNotifier{
 }
 
 class NoteData extends DataTableSource{
-  final BuildContext context;
-  NoteData({required this.context});
+  final BuildContext? context;
+  NoteData({this.context});
 
   List<Data> celldata = [];
 
@@ -44,7 +44,7 @@ class NoteData extends DataTableSource{
       DataCell(Text(celldata[index].createdAt.toString().substring(0,10),style: TextStyle(fontWeight: celldata[index].isPinned! ? FontWeight.bold:FontWeight.normal),)),
     ],onSelectChanged:(selected) {
       if(selected!) SchedulerBinding.instance.addPostFrameCallback((_) {
-        NoteDialog().show(context, note:Data(
+        NoteDialog().show(context!, note:Data(
           isPinned: celldata[index].isPinned,
           noticeUuid: celldata[index].noticeUuid,
             noticeBody: celldata[index].noticeBody??'내용',

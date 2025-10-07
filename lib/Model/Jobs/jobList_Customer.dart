@@ -1,7 +1,7 @@
 class JobList_Customer {
   String? code;
   String? message;
-  Data? data;
+  Data? data = Data();
 
   JobList_Customer({this.code, this.message, this.data});
 

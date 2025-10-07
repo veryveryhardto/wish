@@ -2,7 +2,7 @@ import 'package:wish/Model/message.dart';
 
 class SignIn extends Message {
   String? code;
-  Data? data;
+  Data? data = Data();
 
   SignIn({this.code, this.data,});
 
@@ -19,7 +19,7 @@ class Data {
   String? accessTokenExp;
   String? refreshToken;
   String? refreshTokenExp;
-  User? user;
+  User? user = User();
 
   Data(
       {this.accessToken,

@@ -5,18 +5,14 @@ import 'package:toggle_switch/toggle_switch.dart';
 import 'package:wish/Model/Memo/memoList.dart' as memoList;
 import 'package:wish/Model/Jobs/jobList.dart' as jobList;
 import 'package:wish/Model/User/memberlist.dart' as memberList;
-import 'package:wish/Model/User/signIn.dart';
 import 'package:wish/Provider/JobProvider.dart';
 import 'package:wish/Provider/UserProvider.dart';
-import 'package:wish/Screen/Jobs/jobDetail_customer.dart';
 import 'package:wish/Screen/Jobs/memberList(assign).dart';
-import 'package:wish/Screen/SignLayout/loginPage.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
 import 'package:wish/Screen/Widget/customDropdown.dart';
 import 'package:wish/Screen/Widget/customTextField.dart';
 import 'package:wish/Screen/Widget/customToast.dart';
 
-import '../../Model/Jobs/jobDetail.dart';
 import '../../Model/message.dart';
 import '../../Model/token.dart';
 import '../../Service.dart';
@@ -33,9 +29,10 @@ class JobDetail extends StatefulWidget {
 class _JobDetailState extends State<JobDetail> {
 
 
+  bool _init = false;
+
   TextEditingController _memo = TextEditingController();
   TextEditingController _status = TextEditingController();
-  bool _isDetail = true;
   int _toggle = 0;
   void initState() {
     super.initState();
@@ -59,6 +56,7 @@ class _JobDetailState extends State<JobDetail> {
         debugPrint(e.toString());
       }
     }
+    setState(()=>_init=true);
   }
 
   @override
@@ -75,8 +73,8 @@ class _JobDetailState extends State<JobDetail> {
 
     return Scaffold(
       appBar: CustomAppBar(title: '시공 정보',),
-      body: Center(
-        child: Container(
+      body:  Center(
+        child: !_init ? CircularProgressIndicator(color: Color(0xff50C7E1),): Container(
           padding: EdgeInsets.all(20),
           height: double.infinity,
           width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.width)*0.6,
@@ -191,7 +189,7 @@ class _JobDetailState extends State<JobDetail> {
                   CustomToast('수정되었습니다.', context);
                 }
               } catch (e) {
-                debugPrint(e as String);
+                debugPrint(e.toString());
                 Indicator().dismiss();
                 CustomToast('수정되지 않았습니다.', context);
               }
@@ -396,7 +394,7 @@ class _JobDetailState extends State<JobDetail> {
                     else
                       return;
                   } catch (e) {
-                    debugPrint(e as String?);
+                    debugPrint(e.toString());
                   }
                 }
               }, child: Text('작성'),)
@@ -478,7 +476,7 @@ class _JobDetailState extends State<JobDetail> {
                             else
                               return;
                           } catch (e) {
-                            debugPrint(e as String?);
+                            debugPrint(e.toString());
                           }
                         }
                       },
@@ -556,7 +554,7 @@ Delete(BuildContext context,String memoID) async{
                     } catch (e) {
                       CustomToast('잘못된 접근입니다.', context);
                       Indicator().dismiss();
-                      debugPrint(e as String);
+                      debugPrint(e.toString());
                     }
                   },
                 ),
@@ -649,7 +647,7 @@ Delete(BuildContext context,String memoID) async{
                             CustomToast('작업이 반려되지 않았습니다.', context);
                           }
                         } catch (e) {
-                          debugPrint(e as String?);
+                          debugPrint(e.toString());
                           Indicator().dismiss();
                           CustomToast('잘못된 접근입니다.', context);
                         }

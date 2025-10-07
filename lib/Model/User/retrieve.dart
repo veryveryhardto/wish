@@ -4,7 +4,7 @@ class Retrieve extends Message{
   String? code;
   String? message;
   String? detail;
-  Data? data;
+  Data? data = Data();
 
   Retrieve({this.code, this.message, this.detail, this.data});
 

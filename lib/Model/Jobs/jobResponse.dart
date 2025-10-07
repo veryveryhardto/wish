@@ -1,6 +1,6 @@
 class JobResponse {
   String? code;
-  Data? data;
+  Data? data = Data();
 
   JobResponse({this.code, this.data});
 

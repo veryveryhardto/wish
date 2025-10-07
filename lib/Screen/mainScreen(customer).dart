@@ -6,7 +6,7 @@ import 'package:wish/Provider/NoteProvider.dart';
 import 'package:wish/Screen/Jobs/addPage_1.dart';
 import 'package:wish/Screen/SignLayout/loginPage.dart';
 import 'package:wish/Screen/Widget/appBar.dart';
-import 'dart:js' as js;
+import 'package:universal_html/html.dart' as html;
 
 import 'package:wish/Screen/Jobs/JobList_Customer.dart';
 
@@ -25,6 +25,8 @@ class MainScreen_Customer extends StatefulWidget {
 
 class _MainScreen_CustomerState extends State<MainScreen_Customer> {
 
+  bool _init = false;
+
   PaginatorController? _controller;
   @override
   void initState() {
@@ -37,34 +39,33 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
 
   Future<void> Notice() async{
     NoteProvider note=Provider.of<NoteProvider>(context,listen: false);
-    JobProvider job=Provider.of<JobProvider>(context,listen: false);
 
-    var json2=await Service().Fetch('', 'get', '/api/staff/jobs',await Token().AccessRead());
-    if(json2!=false&&json2['code']=='success') {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()),);
-    }
-    else{
-      var json=await Service().Fetch('', 'get', '/api/notices',);
-      if(json==false) return;
-      else {
-        try {
+    try {
+      var json2=await Service().Fetch('', 'get', '/api/staff/jobs',await Token().AccessRead());
+      if(json2!=false&&json2['code']=='success') {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()),);
+      }
+      else{
+        var json=await Service().Fetch('', 'get', '/api/notices',);
+        if(json==false) return;
+        else {
           var data = NoteList.fromJson(json);
           if(data.code=='success'&&data.data!=null&&data.data!.length>0){
             note.setNoteList=data;
             note.setNoteData(data,context);
           }
           else return;
-        } catch(e){
-          debugPrint(e as String);
         }
       }
+    } catch(e){
+      debugPrint(e.toString());
     }
+    setState(()=>_init=true);
   }
 
 
   @override
   Widget build(BuildContext context) {
-    UserProvider ui=Provider.of<UserProvider>(context);
     JobProvider job=Provider.of<JobProvider>(context);
     NoteProvider note=Provider.of<NoteProvider>(context);
     return Scaffold(
@@ -72,8 +73,8 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
           action: LoginButton(context),
           pop: false
       ),
-      body:  Center(
-        child: Container(
+      body: Center(
+        child: !_init ? CircularProgressIndicator(color: Color(0xff50C7E1),):Container(
           padding: EdgeInsets.all(20),
           height: double.infinity,
           width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 :(MediaQuery.of(context).size.width)*0.6,
@@ -119,7 +120,7 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
         backgroundColor: Colors.transparent, // 배경색 제거
         shadowColor: Colors.transparent, // 그림자 제거
       ),
-      onPressed: ()=>js.context.callMethod('open', ['https://linktr.ee/wish.clean']),
+      onPressed: ()=>html.window.open('https://linktr.ee/wish.clean','링크트리'),
       child: Image.asset('assets/image/ImageButton.png',),
     ),
   );
