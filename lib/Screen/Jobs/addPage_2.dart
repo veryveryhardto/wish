@@ -99,7 +99,8 @@ class _AddPage_2State extends State<AddPage_2> {
                             onPressed: () async{
                               var result = await execDaumPostcode().toDart;
                               AddressData _addressData = AddressData.fromMap(jsonDecode(result.toString()));
-                              print(result.toString());
+                              print(job.addJob==null);
+                              print(job.addJob.address==null);
                               setState(() {
                                 _address.text=_addressData.roadAddress;
                                 job.addJob.address!.address=_addressData.roadAddress;

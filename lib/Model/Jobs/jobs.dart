@@ -1,14 +1,14 @@
 class Jobs {
   String? applicantName;
   String? phone;
-  Address? address = Address();
+  Address address = Address();
   String? categoryUuid;
   String? requestNote;
 
   Jobs(
       {this.applicantName,
         this.phone,
-        this.address,
+        required this.address,
         this.categoryUuid,
         this.requestNote});
 
@@ -35,9 +35,9 @@ class Jobs {
 }
 
 class Address {
-  String? address;
-  String? addressDetail;
-  int? post;
+  String? address = '';
+  String? addressDetail = '';
+  int? post = 0;
 
   Address({this.address, this.addressDetail, this.post});
 

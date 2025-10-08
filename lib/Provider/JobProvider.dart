@@ -6,7 +6,7 @@ import '../Model/Jobs/jobs.dart';
 import '../Model/Memo/memoList.dart';
 
 class JobProvider with ChangeNotifier{
-  Jobs addJob = Jobs();
+  Jobs addJob = Jobs(address: Address());
   JobDetail _currentJobDetail = JobDetail();
   JobList_Customer jobList_customer=JobList_Customer();
   JobList jobList = JobList();

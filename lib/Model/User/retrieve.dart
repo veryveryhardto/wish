@@ -12,7 +12,7 @@ class Retrieve extends Message{
     code = json['code'];
     message = json['message'];
     detail = json['detail'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? new Data.fromJson(json['data']) : Data();
   }
 }
 

@@ -85,8 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                     Indicator().show(context);
                     Map<String,String> _signIn = {
                       "loginId" : idController.text,
-                      "password" : passwordController.text,
-                      //"password" : sha256.convert(utf8.encode(passwordController.text)).toString(),
+                      "password" : sha256.convert(utf8.encode(passwordController.text)).toString(),
                     };
                     var json = await Service().Fetch(_signIn, 'post', '/api/auth/sign-in');
                     try {
@@ -102,8 +101,8 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
                         }
                         */
-                        user.setRoll = data.data!.user!.role!;
-                        user.setUUID = data.data!.user!.userUuid!;
+                        user.setRoll = data.data?.user?.role??0;
+                        user.setUUID = data.data?.user?.userUuid??'';
                         await Token().Write(data,user.uuid,user.role);
                         CustomToast('로그인에 성공했습니다.', context);
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
