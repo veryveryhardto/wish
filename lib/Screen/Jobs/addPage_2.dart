@@ -99,12 +99,10 @@ class _AddPage_2State extends State<AddPage_2> {
                             onPressed: () async{
                               var result = await execDaumPostcode().toDart;
                               AddressData _addressData = AddressData.fromMap(jsonDecode(result.toString()));
-                              print(job.addJob==null);
-                              print(job.addJob.address==null);
                               setState(() {
                                 _address.text=_addressData.roadAddress;
-                                job.addJob.address!.address=_addressData.roadAddress;
-                                job.addJob.address!.post=int.parse(_addressData.zonecode);
+                                job.addJob.address.address=_addressData.roadAddress;
+                                job.addJob.address.post=int.parse(_addressData.zonecode);
                               });
                             } ,
                             child: Text('주소 찾기',style: TextStyle(fontSize: 17,)),
@@ -156,10 +154,19 @@ class _AddPage_2State extends State<AddPage_2> {
                         onPressed: () async {
                           if(_formKey.currentState!.validate()){
                             Indicator().show(context);
-                            job.addJob;
-                            var json = await Service().Fetch(job.addJob.toJson(), 'post', '/api/public/jobs',Token().AccessRead());
+                            job.addJob.address.addressDetail=_addressDetail.text;
+                            job.addJob.categoryUuid='a3f2b7f8-1c2b-4e3c-9d12-9a5b7e6f1c2d';
+                            Map<String,dynamic> _data = {
+                              "applicantName" : "??",
+                              "phone" : "",
+                              "address" : {
+                                "address" : ""
+                              },
+                              "categoryUuid" : "a3f2b7f8-1c2b-4e3c-9d12-9a5b7e6f1c2d"
+                            };
+                            var _json = await Service().Fetch(_data, 'post', '/api/public/jobs',);
                             try {
-                              var data = Message.fromJson(json);
+                              var data = Message.fromJson(_json);
                               if(data.code=='success'){
                                 CustomToast('시공 신청이 완료되었습니다.', context);
                                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen_Customer()), (route) => false);

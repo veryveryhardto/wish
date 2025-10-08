@@ -137,7 +137,7 @@ class _SignInPageState extends State<SignInPage> {
                       } catch(e){
                         CustomToast('잘못된 접근입니다.', context);
                         Indicator().dismiss();
-                        debugPrint(e as String);
+                        debugPrint(e.toString());
                       }
                     }
                   }, child: Text('회원가입')),

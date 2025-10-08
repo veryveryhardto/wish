@@ -19,7 +19,7 @@ class Token {
   Write(SignIn data,[String? UUID,int? role]) async {
     if(data==null||data.code=='failed') return 'failed';
     if(UUID!=null) await _tokenStorage.write(key: _key['UUIDKey']!, value: UUID);
-    if(UUID!=role) await _tokenStorage.write(key: _key['roleKey']!, value: role.toString());
+    if(role!=null) await _tokenStorage.write(key: _key['roleKey']!, value: role.toString());
     await _tokenStorage.write(key: _key['accessTokenKey']!, value: data.data?.accessToken??'');
     await _tokenStorage.write(key: _key['refreshTokenKey']!, value: data.data?.refreshToken??'');
     return 'success';

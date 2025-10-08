@@ -6,7 +6,7 @@ class JobResponse {
 
   JobResponse.fromJson(Map<String, dynamic> json) {
     code = json['code'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? new Data.fromJson(json['data']) : Data();
   }
 
   Map<String, dynamic> toJson() {

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -155,9 +156,12 @@ class NoteDialog {
                           }:_modify?() async {
                             if(_formKey.currentState!.validate()){
                               Indicator().show(context);
-                              var json = await Service().Fetch(note?.toJson(), 'patch', '/api/notices/${note!.noticeUuid}',await Token().AccessRead());
+                              note?.noticeTitle=title.text;
+                              note?.noticeBody=body.text;
+
+                              var _json = await Service().Fetch(json.encode(note?.toJson()), 'patch', '/api/notices/${note!.noticeUuid}',await Token().AccessRead());
                               try {
-                                var data = Message.fromJson(json);
+                                var data = Message.fromJson(_json);
                                 if(data.code=='success'){
                                   Indicator().dismiss();
                                   CustomToast('공지가 수정되었습니다.', context);
@@ -166,6 +170,7 @@ class NoteDialog {
                                   if(data.code=='success'&&data.data!=null&&data.data!.length>0){
                                     notice.setNoteList=data;
                                     notice.setNoteData(data,context);
+                                    setState(()=>{});
                                   }
                                   Navigator.of(_context).pop();
                                 }

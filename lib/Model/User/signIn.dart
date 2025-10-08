@@ -10,7 +10,7 @@ class SignIn extends Message {
     code = json['code'];
     message = json['message'];
     detail = json['detail'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? new Data.fromJson(json['data']) : Data();
   }
 }
 
@@ -33,7 +33,7 @@ class Data {
     accessTokenExp = json['accessTokenExp'];
     refreshToken = json['refreshToken'];
     refreshTokenExp = json['refreshTokenExp'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    user = json['user'] != null ? new User.fromJson(json['user']) : User();
   }
 }
 

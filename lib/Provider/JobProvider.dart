@@ -30,7 +30,7 @@ class JobProvider with ChangeNotifier{
   }
 
   AddMemo(var memo){
-    memoList.data!.add(memo);
+    memoList.data?.add(memo);
     notifyListeners();
   }
 }

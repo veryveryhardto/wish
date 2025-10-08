@@ -83,7 +83,6 @@ class _MainScreenState extends State<MainScreen> {
 
         if(data2.code=='success'&&data2.data!=null&&data2.data!.length>0) {
           job.setJobList=data2;
-          print(job.jobList.toJson());
           if(job.jobList.data!=null){
             for(var item in job.jobList.data!){
               if(item.jobScheduleTime==null) continue;

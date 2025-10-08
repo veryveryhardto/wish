@@ -8,7 +8,7 @@ class JobList_Customer {
   JobList_Customer.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? new Data.fromJson(json['data']) : Data();
   }
 
   Map<String, dynamic> toJson() {
@@ -23,7 +23,7 @@ class JobList_Customer {
 }
 
 class Data {
-  List<Items>? items;
+  List<Items>? items = [];
 
   Data({this.items});
 

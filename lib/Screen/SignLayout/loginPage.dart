@@ -83,7 +83,8 @@ class _LoginPageState extends State<LoginPage> {
 
                   if(_formKey.currentState!.validate()){
                     Indicator().show(context);
-                    Map<String,String> _signIn = {
+
+                    Map<String,dynamic> _signIn = {
                       "loginId" : idController.text,
                       "password" : sha256.convert(utf8.encode(passwordController.text)).toString(),
                     };
@@ -101,10 +102,15 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
                         }
                         */
+                        print(1);
                         user.setRoll = data.data?.user?.role??0;
+                        print(2);
                         user.setUUID = data.data?.user?.userUuid??'';
+                        print(3);
                         await Token().Write(data,user.uuid,user.role);
+                        print(4);
                         CustomToast('로그인에 성공했습니다.', context);
+                        print(5);
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
                       }
                       else CustomToast('아이디나 비밀번호가 다릅니다.', context);

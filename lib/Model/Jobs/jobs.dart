@@ -21,15 +21,16 @@ class Jobs {
     requestNote = json['requestNote'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['applicantName'] = this.applicantName;
-    data['phone'] = this.phone;
+  toJson() {
+    final data = Map<String,dynamic>.identity();
+    data['applicantName'] = this.applicantName ?? '';
+    data['phone'] = this.phone??'';
     if (this.address != null) {
-      data['address'] = this.address!.toJson();
+      data['address'] = this.address!.toJson().toString();
     }
-    data['categoryUuid'] = this.categoryUuid;
-    data['requestNote'] = this.requestNote;
+    data['categoryUuid'] = this.categoryUuid??'';
+    data['requestNote'] = this.requestNote??'';
+    print(data.runtimeType);
     return data;
   }
 }
@@ -47,11 +48,11 @@ class Address {
     post = json['post'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['address'] = this.address;
-    data['addressDetail'] = this.addressDetail;
-    data['post'] = this.post;
+  toJson() {
+    final data = Map<String,dynamic>.identity();
+    data['address'] = this.address ?? '';
+    data['addressDetail'] = this.addressDetail ?? '';
+    data['post'] = this.post??0;
     return data;
   }
 }

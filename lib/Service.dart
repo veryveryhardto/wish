@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class Service{
 
-  Future<dynamic> Fetch(var data,String method,String link,[var token,String? device]) async{
+  Future<dynamic> Fetch(var data,String method,String link,[String? token,String? device]) async{
     //String url= 'http://115.68.232.69:22000';
     String url= 'http://api.wishclean.co.kr:22000';
     final headers = <String, String>{
@@ -16,8 +16,28 @@ class Service{
     http.Response response;
     debugPrint(token);
     debugPrint(data.toString());
+    debugPrint(data.runtimeType.toString());
     debugPrint(url+link);
 
+    switch (method) {
+      case 'get':
+        response = await http.get(Uri.parse(url + link), headers: headers);
+        break;
+      case 'post':
+        response = await http.post(Uri.parse(url + link), body: data, headers: headers);
+        break;
+      case 'put':
+        response = await http.put(Uri.parse(url + link), body: data, headers: headers);
+        break;
+      case 'patch':
+        response = await http.patch(Uri.parse(url + link), body: data, headers: headers);
+        break;
+      case 'delete':
+        response = await http.delete(Uri.parse(url + link), body: data, headers: headers);
+        break;
+      default:
+        return false;
+    }/*
     try {
       switch (method) {
         case 'get':
@@ -42,6 +62,7 @@ class Service{
       debugPrint(e.toString());
       return e;
     }
+    */
 
     final int statusCode=response.statusCode;
     debugPrint('bytes:${utf8.decode(response.bodyBytes)}');

@@ -8,8 +8,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'Provider/NoteProvider.dart';
 
-void main() async {
 
+void main() async {
   await initializeDateFormatting();
 
   runApp(MultiProvider(

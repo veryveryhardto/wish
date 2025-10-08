@@ -52,15 +52,16 @@ class Data {
     updatedAt = DateTime.parse(json['updated_at']);
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  toJson() {
+    final Map<String, dynamic> data = Map.identity();
     data['notice_uuid'] = this.noticeUuid;
     data['notice_title'] = this.noticeTitle;
     data['notice_body'] = this.noticeBody;
-    data['is_pinned'] = this.isPinned;
+    data['is_pinned'] = this.isPinned.toString();
     data['created_by'] = this.createdBy;
     data['created_at'] = this.createdAt.toString();
     data['updated_at'] = this.updatedAt.toString();
+    print(data.runtimeType);
     return data;
   }
 }
