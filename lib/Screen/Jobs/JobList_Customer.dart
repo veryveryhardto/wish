@@ -170,7 +170,7 @@ class _JobList_CustomerState extends State<JobList_Customer> {
                     columnSpacing: 12,
                     horizontalMargin: 12,
                     dividerThickness: 0,
-                    minWidth:(MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3? (MediaQuery.of(context).size.width)*0.8 : (MediaQuery.of(context).size.width)*0.5,
+                    minWidth: 500,
                     sortColumnIndex: _sortColumnIndex,
                     sortAscending: _sortAscending,
                     sortArrowIconColor:Color(0xff50C7E1),

@@ -137,7 +137,7 @@ class _JobListState extends State<JobList> {
                     columnSpacing: 12,
                     horizontalMargin: 12,
                     dividerThickness: 0,
-                    minWidth:(MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3? (MediaQuery.of(context).size.width)*0.8 : (MediaQuery.of(context).size.width)*0.5,
+                    minWidth: 600,
                     sortColumnIndex: _sortColumnIndex,
                     sortAscending: _sortAscending,
                     sortArrowIconColor:Color(0xff50C7E1),
@@ -148,8 +148,12 @@ class _JobListState extends State<JobList> {
                         onSort: (columnIndex, ascending) => _sort<DateTime>((data) => data.jobScheduleTime??DateTime(2000), columnIndex, ascending),
                       ),
                       DataColumn2(
-                        label: Text('신청자명'),
+                        label: Text('신청상태'),
                         onSort: (columnIndex, ascending) => _sort<String>((data) => data.jobStatus.toString(), columnIndex, ascending),
+                      ),
+                      DataColumn2(
+                        label: Text('신청자명'),
+                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.customerName??'', columnIndex, ascending),
                       ),
                       DataColumn2(
                         label: Text('신청자 번호'),
@@ -162,6 +166,7 @@ class _JobListState extends State<JobList> {
                     ],
                     rows: List<DataRow>.generate( _lastlist.length, (index) => DataRow(cells: [
                       DataCell(Text(_lastlist[index].jobScheduledAt==null||_lastlist[index].jobScheduledAt=="null"?'미정':_lastlist[index].jobScheduleTime.toString().substring(0,10))),
+                      DataCell(Text(_lastlist[index].jobStatusName)),
                       DataCell(Text(_lastlist[index].customerName??'')),
                       DataCell(Text(_lastlist[index].customerPhone??'미정')),
                       DataCell(Text(_lastlist[index].jobCategoryName??'')),

@@ -80,6 +80,7 @@ class _JobDetailState extends State<JobDetail> {
         children: [
           DetailRow(job, user),
           Container(
+            height: 650,
             padding: EdgeInsets.all(20),
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -269,6 +270,7 @@ class _JobDetailState extends State<JobDetail> {
           if (dateTime != null) {
             setState(() {
               initialDay = dateTime;
+              job.currentJob.jobScheduledAt = dateTime;
             });
           }
         },
@@ -336,7 +338,7 @@ class _JobDetailState extends State<JobDetail> {
                         color: Color(0xff50C7E1)),),),
                   SizedBox(height: 5,),
                   Container(
-                    height: 140,
+                    height: 50,
                     child: TextFormField(
                       textAlignVertical: TextAlignVertical.top,
                       expands: true,
@@ -365,41 +367,44 @@ class _JobDetailState extends State<JobDetail> {
               ),
             ),
             SizedBox(width: 10,),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(5),
-                minimumSize: Size.zero,
-              ),
-              onPressed: () async {
-                Map<String,String> _addMemo = {
-                  "content" : _memo.text,
-                };
-                var json = await Service().Fetch(_addMemo, 'post', '/api/jobs/${job.currentJob.jobUuid}/memos',
-                    await Token().AccessRead());
-                if (json == false)
-                  return;
-                else {
-                  try {
-                    var data = Message.fromJson(json);
-                    if (data.code == 'success') {
-                      var json2 = await Service().Fetch('', 'get',
-                          '/api/jobs/${job.currentJob.jobUuid}/memos',
-                          await Token().AccessRead());
-                      var data2 = memoList.MemoList.fromJson(json2);
-                      if (data.code == 'success' && data2.data != null &&
-                          data2.data!.length > 0) {
-                        job.setMemoList = data2;
+            Container(
+              height: 70,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.all(5),
+                  minimumSize: Size.zero,
+                ),
+                onPressed: () async {
+                  Map<String,String> _addMemo = {
+                    "content" : _memo.text,
+                  };
+                  var json = await Service().Fetch(_addMemo, 'post', '/api/jobs/${job.currentJob.jobUuid}/memos',
+                      await Token().AccessRead());
+                  if (json == false)
+                    return;
+                  else {
+                    try {
+                      var data = Message.fromJson(json);
+                      if (data.code == 'success') {
+                        var json2 = await Service().Fetch('', 'get',
+                            '/api/jobs/${job.currentJob.jobUuid}/memos',
+                            await Token().AccessRead());
+                        var data2 = memoList.MemoList.fromJson(json2);
+                        if (data.code == 'success' && data2.data != null &&
+                            data2.data!.length > 0) {
+                          job.setMemoList = data2;
+                        }
+                        _memo.text='';
+                        setState(() {});
                       }
-                      _memo.text='';
-                      setState(() {});
+                      else
+                        return;
+                    } catch (e) {
+                      debugPrint(e.toString());
                     }
-                    else
-                      return;
-                  } catch (e) {
-                    debugPrint(e.toString());
                   }
-                }
-              }, child: Text('작성'),)
+                }, child: Text('작성'),),
+            )
           ],
         ),
       ],
