@@ -37,7 +37,7 @@ class _MemberListPageState extends State<MemberListPage> {
     // TODO: implement initState
     super.initState();
     UserProvider user =Provider.of<UserProvider>(context,listen: false);
-    _lastlist = member.MemberList.fromJson(user.memberList.toJson()).data!.items!;
+    _lastlist = member.MemberList.fromJson(user.memberList.toJson()).data?.items??[];
   }
 
   bool _sortAscending = true;
@@ -104,7 +104,7 @@ class _MemberListPageState extends State<MemberListPage> {
                           }
                           else return;
                         } catch(e){
-                          debugPrint(e as String);
+                          debugPrint(e.toString());
                         }
                       }
                       },
@@ -207,12 +207,12 @@ class _MemberListPageState extends State<MemberListPage> {
                             columns: [
                               DataColumn2(
                                 label: Text('ID'),
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.loginId!, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.loginId??'', columnIndex, ascending),
                               ),
                               DataColumn2(
                                 label: Text('이름'),
                                 size: ColumnSize.S,
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.name!, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.name??'', columnIndex, ascending),
                               ),
                               DataColumn2(
                                 label: Text('등급'),
@@ -226,7 +226,7 @@ class _MemberListPageState extends State<MemberListPage> {
                               DataColumn2(
                                 label: Text('전화번호'),
                                 size: ColumnSize.L,
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.phone!, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.phone??'', columnIndex, ascending),
                               ),
                             ],
                             rows: List<DataRow>.generate( _lastlist.length, (index) => DataRow(cells: [
@@ -238,7 +238,7 @@ class _MemberListPageState extends State<MemberListPage> {
                             ],
                               onSelectChanged: (selected) async{
                               if(selected!) {
-                                RoleModify(_lastlist[index].role!,_lastlist[index].userUuid!,index,user);
+                                RoleModify(_lastlist[index].role??0,_lastlist[index].userUuid??'',index,user);
                               }
                               },
                             ))),
@@ -297,7 +297,7 @@ class _MemberListPageState extends State<MemberListPage> {
                         } catch(e){
                           CustomToast('잘못된 접근입니다.', context);
                           Indicator().dismiss();
-                          debugPrint(e as String);
+                          debugPrint(e.toString());
                         }
                       },
                     ),

@@ -156,6 +156,7 @@ class _AddPage_2State extends State<AddPage_2> {
                             Indicator().show(context);
                             job.addJob.address.addressDetail=_addressDetail.text;
                             job.addJob.categoryUuid='a3f2b7f8-1c2b-4e3c-9d12-9a5b7e6f1c2d';
+                            /*
                             Map<String,dynamic> _data = {
                               "applicantName" : "??",
                               "phone" : "",
@@ -164,7 +165,9 @@ class _AddPage_2State extends State<AddPage_2> {
                               },
                               "categoryUuid" : "a3f2b7f8-1c2b-4e3c-9d12-9a5b7e6f1c2d"
                             };
-                            var _json = await Service().Fetch(_data, 'post', '/api/public/jobs',);
+
+                             */
+                            var _json = await Service().Fetch(job.addJob.toJson(), 'post', '/api/public/jobs',);
                             try {
                               var data = Message.fromJson(_json);
                               if(data.code=='success'){

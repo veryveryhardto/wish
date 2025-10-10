@@ -145,7 +145,7 @@ class _JobListState extends State<JobList> {
                       DataColumn2(
                         label: Text('작업일'),
                         size: ColumnSize.L,
-                        onSort: (columnIndex, ascending) => _sort<DateTime>((data) => data.jobScheduleTime!, columnIndex, ascending),
+                        onSort: (columnIndex, ascending) => _sort<DateTime>((data) => data.jobScheduleTime??DateTime(2000), columnIndex, ascending),
                       ),
                       DataColumn2(
                         label: Text('신청자명'),
@@ -153,11 +153,11 @@ class _JobListState extends State<JobList> {
                       ),
                       DataColumn2(
                         label: Text('신청자 번호'),
-                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.customerPhone!, columnIndex, ascending),
+                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.customerPhone??'', columnIndex, ascending),
                       ),
                       DataColumn2(
                         label: Text('카테고리'),
-                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.jobCategoryName!, columnIndex, ascending),
+                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.jobCategoryName??'', columnIndex, ascending),
                       ),
                     ],
                     rows: List<DataRow>.generate( _lastlist.length, (index) => DataRow(cells: [

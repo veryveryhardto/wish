@@ -116,22 +116,26 @@ class _JobList_CustomerState extends State<JobList_Customer> {
 
                                   var data = jobList.JobList_Customer.fromJson(json);
                                   _phoneChanged = false;
-                                  if (data.code == 'success' &&
-                                      data.data!.items != null &&
-                                      data.data!.items!.length > 0) {
+                                  if (data.code == 'success')
                                     job.jobList_customer = data;
+                                    if(data.data!.items != null &&
+                                      data.data!.items!.length > 0) {
                                     _lastlist = jobList.JobList_Customer
                                         .fromJson(job.jobList_customer.toJson())
                                         .data!.items!;
                                     }
+                                    else{
+                                      _lastlist = [];
+                                    }
+
                                     Indicator().dismiss();
                                 } catch (e) {
-                                  debugPrint(e as String);
+                                  debugPrint(e.toString());
                                   Indicator().dismiss();
                                   }
                                 setState(() {
-                                  List<jobList.Items>? list = job.jobList_customer.data!.items==null?[]:job.jobList_customer.data!.items;
-                                  _lastlist = list!.where(
+                                  List<jobList.Items> list = job.jobList_customer.data?.items ?? [];
+                                  _lastlist = list.where(
                                       _text.text != '' ? (e) =>
                                           e.jobCategoryName!.contains(_text.text) :
                                           (e) => true).toList();
@@ -177,16 +181,16 @@ class _JobList_CustomerState extends State<JobList_Customer> {
                       ),
                       DataColumn2(
                         label: Text('카테고리'),
-                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.jobCategoryName!, columnIndex, ascending),
+                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.jobCategoryName??'', columnIndex, ascending),
                       ),
                       DataColumn2(
                         label: Text('작업자명'),
-                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.managerName!, columnIndex, ascending),
+                        onSort: (columnIndex, ascending) => _sort<String>((data) => data.managerName??'', columnIndex, ascending),
                       ),
                       DataColumn2(
                         label: Text('작업일'),
                         size: ColumnSize.L,
-                        onSort: (columnIndex, ascending) => _sort<DateTime>((data) => data.jobScheduleTime!, columnIndex, ascending),
+                        onSort: (columnIndex, ascending) => _sort<DateTime>((data) => data.jobScheduleTime??DateTime(2000), columnIndex, ascending),
                       ),
                     ],
                     rows: List<DataRow>.generate( _lastlist.length, (index) => DataRow(cells: [
@@ -228,7 +232,7 @@ class _JobList_CustomerState extends State<JobList_Customer> {
         minimumSize: Size.zero,
       ),
       onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage())),
-      child: Text('업체용 로그인',style: TextStyle(color: Color(0xff50C7E1),),
+      child: Text('로그인',style: TextStyle(color: Color(0xff50C7E1),),
       ),),
   );
 }

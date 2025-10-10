@@ -96,7 +96,7 @@ class _JobDetail_CustomerState extends State<JobDetail_Customer> {
         minimumSize: Size.zero,
       ),
       onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage())),
-      child: Text('업체용 로그인',style: TextStyle(color: Color(0xff50C7E1),),
+      child: Text('로그인',style: TextStyle(color: Color(0xff50C7E1),),
       ),),
   );
 
@@ -106,8 +106,8 @@ class _JobDetail_CustomerState extends State<JobDetail_Customer> {
     children: [
       CustomTextField(data: job.customerName, title: '신청자명', readOnly: true,),
       CustomTextField(data: job.customerPhone, title: '휴대폰번호', readOnly: true,),
-      CustomTextField(data: job.jobAddress!.address, title: '시공주소', readOnly: true,),
-      CustomTextField(data: job.jobAddress!.addressDetail, title: '상세주소', readOnly: true,),
+      CustomTextField(data: job.jobAddress?.address, title: '시공주소', readOnly: true,),
+      CustomTextField(data: job.jobAddress?.addressDetail, title: '상세주소', readOnly: true,),
       //CustomTextField(data: job.jobArea, title: '타입(평수)', readOnly: true,),
       //CustomTextField(data: job., title: '작업범위', readOnly: true,),
       CustomTextField(data: job.jobCategoryName, title: '카테고리', readOnly: true,),

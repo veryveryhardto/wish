@@ -133,7 +133,7 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
         minimumSize: Size.zero,
       ),
       onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage())),
-      child: Text('업체용 로그인',style: TextStyle(color: Color(0xff50C7E1),),
+      child: Text('로그인',style: TextStyle(color: Color(0xff50C7E1),),
       ),),
   );
 
@@ -146,7 +146,7 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
         child: Text('공지사항',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
       ),
       Container(
-        height: 350,
+        height: 445,
         //padding: EdgeInsets.only(bottom: 25),
         margin: EdgeInsets.only(bottom: 10),
         decoration: const BoxDecoration(
@@ -160,13 +160,13 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
               child: Text('공지가 없습니다.'))),
           columns: const [
             DataColumn2(label: Text(''),size: ColumnSize.L),
-            DataColumn2(label: Text(''),numeric: true)
+            DataColumn2(label: Text(''),numeric: true,size: ColumnSize.S)
           ],
           autoRowsToHeight: true,
           controller: _controller,
           headingRowHeight : 20,
           rowsPerPage: 5,
-          dataRowHeight: 30,
+          dataRowHeight: 40,
           dividerThickness: 0,
           hidePaginator: true,
           showCheckboxColumn: false,

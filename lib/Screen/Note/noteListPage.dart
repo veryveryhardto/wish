@@ -106,7 +106,7 @@ class _NoteListPageState extends State<NoteListPage> {
                           }
                           else return;
                         } catch(e){
-                          debugPrint(e as String);
+                          debugPrint(e.toString());
                         }
                       }
                       },
@@ -202,33 +202,33 @@ class _NoteListPageState extends State<NoteListPage> {
                             columns: [
                               DataColumn2(
                                 label: Text('작성자'),
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.createdBy!, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.createdBy??'', columnIndex, ascending),
                               ),
                               DataColumn2(
                                 label: Text('핀'),
                                 size: ColumnSize.S,
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.isPinned!?'1':'0', columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.isPinned==true?'1':'0', columnIndex, ascending),
                               ),
                               DataColumn2(
                                 label: Text('제목'),
                                 size: ColumnSize.L,
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.noticeTitle!, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.noticeTitle??'', columnIndex, ascending),
                               ),
                               DataColumn2(
                                 label: Text('작성시간'),
                                 size: ColumnSize.L,
-                                onSort: (columnIndex, ascending) => _sort<DateTime>((data) => data.createdAt!, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<DateTime>((data) => data.createdAt??DateTime(2000), columnIndex, ascending),
                               ),
                             ],
-                            rows: List<DataRow>.generate( _lastList.data!.length, (index) => DataRow(cells: [
-                              DataCell(Text(_lastList.data![index].createdBy??'null')),
-                              DataCell(Icon(Icons.check,color: _lastList.data![index].isPinned! ? Colors.black:Colors.white,)),
-                              DataCell(Text(_lastList.data![index].noticeTitle??'null')),
-                              DataCell(Text(_lastList.data![index].createdAt.toString().substring(0,19))),
+                            rows: List<DataRow>.generate( _lastList.data==null?0:_lastList.data!.length, (index) => DataRow(cells: [
+                              DataCell(Text(_lastList.data?[index].createdBy??'null')),
+                              DataCell(Icon(Icons.check,color: _lastList.data?[index].isPinned==true ? Colors.black:Colors.white,)),
+                              DataCell(Text(_lastList.data?[index].noticeTitle??'null')),
+                              DataCell(Text(_lastList.data?[index].createdAt.toString().substring(0,19)??'')),
                             ],
                               onSelectChanged: (selected){
                                 if(selected!) NoteDialog().show(context, note:Data(
-                                    noticeUuid: _lastList.data![index].noticeUuid!,
+                                    noticeUuid: _lastList.data![index].noticeUuid??'',
                                     noticeBody: _lastList.data![index].noticeBody??'내용',
                                     noticeTitle: _lastList.data![index].noticeTitle??'null',
                                     createdBy: _lastList.data![index].createdBy??'null',

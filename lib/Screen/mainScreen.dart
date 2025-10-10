@@ -22,7 +22,6 @@ import '../Service.dart';
 import 'Jobs/jobDetail.dart';
 import 'Jobs/jobList.dart';
 import 'MenuScreen/menuScreen.dart';
-import 'package:universal_html/html.dart' as html;
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key,});
@@ -101,6 +100,7 @@ class _MainScreenState extends State<MainScreen> {
     }
     setState(()=>_init=true);
   }
+  
   int getHashCode(DateTime key) => key.day * 1000000 + key.month * 10000 + key.year;
   List<Event> _getEventsForDay(DateTime day) => _kEvents[day] ?? [];
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -280,7 +280,7 @@ class _MainScreenState extends State<MainScreen> {
                                 job.currentJobDetail=data;
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetail()));
                               } catch (e) {
-                                debugPrint(e as String);
+                                debugPrint(e.toString());
                               }
                             }
                           },
@@ -320,7 +320,7 @@ class _MainScreenState extends State<MainScreen> {
         child: Text('공지사항',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
       ),
       Container(
-          height: 200,
+          height: 245,
           //padding: EdgeInsets.only(bottom: 25),
           margin: EdgeInsets.only(bottom: 10),
           decoration: const BoxDecoration(
@@ -340,7 +340,7 @@ class _MainScreenState extends State<MainScreen> {
             controller: _controller,
             headingRowHeight : 20,
             rowsPerPage: 10,
-            dataRowHeight: 30,
+            dataRowHeight: 40,
             dividerThickness: 0,
             hidePaginator: true,
             showCheckboxColumn: false,
@@ -392,7 +392,7 @@ class _MainScreenState extends State<MainScreen> {
                       }
                       else return;
                     } catch(e){
-                      debugPrint(e as String);
+                      debugPrint(e.toString());
                     }
                   }
 
@@ -421,7 +421,7 @@ class _MainScreenState extends State<MainScreen> {
                       }
                       else return;
                     } catch(e){
-                      debugPrint(e as String);
+                      debugPrint(e.toString());
                     }
                   }
                 }, child: Text('회원 관리')),

@@ -168,12 +168,12 @@ class _MemberList_AssignState extends State<MemberList_Assign> {
                             columns: [
                               DataColumn2(
                                 label: Text('ID'),
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.loginId!, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.loginId??'', columnIndex, ascending),
                               ),
                               DataColumn2(
                                 label: Text('이름'),
                                 size: ColumnSize.S,
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.name!, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.name??'', columnIndex, ascending),
                               ),
                               DataColumn2(
                                 label: Text('등급'),
@@ -187,7 +187,7 @@ class _MemberList_AssignState extends State<MemberList_Assign> {
                               DataColumn2(
                                 label: Text('전화번호'),
                                 size: ColumnSize.L,
-                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.phone!, columnIndex, ascending),
+                                onSort: (columnIndex, ascending) => _sort<String>((data) => data.phone??'', columnIndex, ascending),
                               ),
                             ],
                             rows: List<DataRow>.generate( _lastlist.length, (index) => DataRow(cells: [

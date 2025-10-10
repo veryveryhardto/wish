@@ -139,7 +139,7 @@ class _JobDetailState extends State<JobDetail> {
   }
   Widget MemoTile(JobProvider job, UserProvider user)=>ListView.builder(
     shrinkWrap: true,
-    itemCount: job.memoList.data!.length,
+    itemCount: job.memoList.data==null?0:job.memoList.data!.length,
     itemBuilder: (context, index) {
       return Container(
         margin: const EdgeInsets.symmetric(
@@ -154,12 +154,12 @@ class _JobDetailState extends State<JobDetail> {
           borderRadius: BorderRadius.circular(12.0),
         ),
         child: ListTile(
-            title: Text('${job.memoList.data![index].content}'),
-            subtitle: Text('${job.memoList.data![index].createdAt.toString().substring(0,19)}'),
-            trailing: Text('${job.memoList.data![index].writerName}',style: TextStyle(color: user.uuid==job.memoList.data![index].writerUuid?Color(0xff50C7E1):Colors.black),),
-            onTap: user.uuid==job.memoList.data![index].writerUuid?() async {
+            title: Text('${job.memoList.data?[index].content}'),
+            subtitle: Text('${job.memoList.data?[index].createdAt.toString().substring(0,19)}'),
+            trailing: Text('${job.memoList.data?[index].writerName}',style: TextStyle(color: user.uuid==job.memoList.data?[index].writerUuid?Color(0xff50C7E1):Colors.black),),
+            onTap: user.uuid==job.memoList.data?[index].writerUuid?() async {
               var _isTrue = await MemoModify(user, job, index);
-              if(_isTrue=='delete') job.memoList.data!.removeAt(index);
+              if(_isTrue=='delete') job.memoList.data?.removeAt(index);
               if(_isTrue=='modify'||_isTrue=='delete') setState(() {});
             }:null
         ),
@@ -186,8 +186,8 @@ class _JobDetailState extends State<JobDetail> {
     mainAxisSize: isVertical? MainAxisSize.min:MainAxisSize.max,
     mainAxisAlignment: isVertical? MainAxisAlignment.start:MainAxisAlignment.spaceAround,
     children: [
-      CustomTextField(data: job.currentJob.jobAddress!.address, title: '시공주소', readOnly: true,),
-      CustomTextField(data: job.currentJob.jobAddress!.addressDetail, title: '상세주소', readOnly: true,),
+      CustomTextField(data: job.currentJob.jobAddress?.address, title: '시공주소', readOnly: true,),
+      CustomTextField(data: job.currentJob.jobAddress?.addressDetail, title: '상세주소', readOnly: true,),
       //CustomTextField(data: job.jobArea, title: '타입(평수)', readOnly: true,),
       //CustomTextField(data: job., title: '작업범위', readOnly: true,),
       Row(children: [
@@ -408,7 +408,7 @@ class _JobDetailState extends State<JobDetail> {
 
   MemoModify(UserProvider user,JobProvider job,int index) {
     String _mod = 'nope';
-    TextEditingController _content = TextEditingController()..text=job.memoList.data![index].content!;
+    TextEditingController _content = TextEditingController()..text=job.memoList.data?[index].content??'';
     return showDialog(
       context: context,
       builder: (context){
@@ -462,7 +462,7 @@ class _JobDetailState extends State<JobDetail> {
                         Map<String,String> _modMemo = {
                           "content" : _content.text,
                         };
-                        var json = await Service().Fetch(_modMemo, 'patch', '/api/jobs/${job.memoList.data![index].memoUuid!}/memos',
+                        var json = await Service().Fetch(_modMemo, 'patch', '/api/jobs/${job.memoList.data?[index].memoUuid}/memos',
                             await Token().AccessRead());
                         if (json == false)
                           return;
@@ -470,8 +470,8 @@ class _JobDetailState extends State<JobDetail> {
                           try {
                             var data = Message.fromJson(json);
                             if (data.code == 'success') {
-                              job.memoList.data![index].content=_content.text;
-                              job.memoList.data![index].createdAt=DateTime.now();
+                              job.memoList.data?[index].content=_content.text;
+                              job.memoList.data?[index].createdAt=DateTime.now();
                               _mod = 'modify';
                               Navigator.pop(context,_mod);
                             }
@@ -491,7 +491,7 @@ class _JobDetailState extends State<JobDetail> {
                       style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 15),backgroundColor: Colors.red),
                       child: Text("메모 삭제",style: TextStyle(fontSize: 20),),
                       onPressed: () async {
-                        var _delete = await Delete(context, job.memoList.data![index].memoUuid!);
+                        var _delete = await Delete(context, job.memoList.data?[index].memoUuid??'');
                         if(_delete=='delete') {
                           _mod = _delete;
                           Navigator.pop(context,_mod);

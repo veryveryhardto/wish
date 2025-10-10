@@ -150,7 +150,7 @@ class NoteDialog {
                               } catch(e){
                                 CustomToast('잘못된 접근입니다.', context);
                                 Indicator().dismiss();
-                                debugPrint(e as String);
+                                debugPrint(e.toString());
                               }
                             }
                           }:_modify?() async {
@@ -179,7 +179,7 @@ class NoteDialog {
                               } catch(e){
                                 CustomToast('잘못된 접근입니다.', context);
                                 Indicator().dismiss();
-                                debugPrint(e as String);
+                                debugPrint(e.toString());
                               }
                             }
                           }:()=>setState(()=>_modify=true),
@@ -244,7 +244,7 @@ class NoteDialog {
                       } catch (e) {
                         CustomToast('잘못된 접근입니다.', context);
                         Indicator().dismiss();
-                        debugPrint(e as String);
+                        debugPrint(e.toString());
                       }
                     },
                   ),

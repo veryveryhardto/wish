@@ -166,7 +166,7 @@ class _MemberPageState extends State<MemberPage> {
                         } catch(e){
                           CustomToast('잘못된 접근입니다.', context);
                           Indicator().dismiss();
-                          debugPrint(e as String);
+                          debugPrint(e.toString());
                         }
                       }
                     },

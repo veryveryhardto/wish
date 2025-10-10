@@ -117,7 +117,7 @@ class _MenuScreenState extends State<MenuScreen> {
                         } catch(e){
                           CustomToast('잘못된 접근입니다.', context);
                           Indicator().dismiss();
-                          debugPrint(e as String);
+                          debugPrint(e.toString());
                         }
                       },
                     ),
@@ -185,7 +185,7 @@ class _MenuScreenState extends State<MenuScreen> {
                         } catch (e) {
                           CustomToast('잘못된 접근입니다.', context);
                           Indicator().dismiss();
-                          debugPrint(e as String);
+                          debugPrint(e.toString());
                         }
                       },
                     ),
