@@ -6,7 +6,7 @@ class Service{
 
   Future<dynamic> Fetch(var data,String method,String link,[String? token,String? device]) async{
     //String url= 'http://115.68.232.69:22000';
-    String url= 'http://api.wishclean.co.kr:22000';
+    String url= 'https://api.wishclean.co.kr:443';
     final headers = <String, String>{
       'Accept': 'application/json',
       if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
