@@ -37,7 +37,7 @@ class NoteData extends DataTableSource{
       DataCell(Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(celldata[index].noticeTitle??'제목',style: TextStyle(fontWeight: celldata[index].isPinned! ? FontWeight.bold:FontWeight.normal),),
+          Text(celldata[index].noticeTitle??'제목',style: TextStyle(fontWeight: celldata[index].isPinned! ? FontWeight.bold:FontWeight.normal,),),
           DateTime.now().difference(celldata[index].createdAt!).inDays<3?Text('  new',style: TextStyle(color: Color(0xff50C7E1)),):SizedBox()
         ],
       )),

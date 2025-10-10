@@ -71,86 +71,117 @@ class _JobDetailState extends State<JobDetail> {
     JobProvider job=Provider.of<JobProvider>(context);
     UserProvider user = Provider.of<UserProvider>(context);
 
+
     return Scaffold(
       appBar: CustomAppBar(title: '시공 정보',),
-      body:  Center(
-        child: !_init ? CircularProgressIndicator(color: Color(0xff50C7E1),): Container(
-          padding: EdgeInsets.all(20),
-          height: double.infinity,
-          width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.width)*0.6,
-          child: Row(
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: Color(0xff50C7E1),
-                                borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)),
-                              ),
-                              child: Text(job.currentJob.customerName,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                            ),
-                            SizedBox(width: 10,),
-                            Icon(Icons.phone),
-                            Text(job.currentJob.customerPhone),
-                          ],
-                        ),
-                        Expanded(
-                          child: Container(
-                            height: double.infinity,
-                            padding: EdgeInsets.all(20),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(topRight: Radius.circular(20),bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20)),
-                            ),
-                            child: FirstDetail(context,job,false,user),
+      body: !_init ? Center(child: CircularProgressIndicator(color: Color(0xff50C7E1),)): (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<1?
+      ListView(
+        padding: EdgeInsets.all(20),
+        children: [
+          DetailRow(job, user),
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+            ),
+            child: FirstDetail(context,job,true,user),),
+          SizedBox(height: 20,),
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+            ),
+            child: SecondDetail(context,job,true,user),),
+        ],
+      ): Center(
+        child: Container(
+            padding: EdgeInsets.all(20),
+            height: double.infinity,
+            width: (MediaQuery.of(context).size.width)/(MediaQuery.of(context).size.height)<4/3 ? (MediaQuery.of(context).size.width)*0.9 : (MediaQuery.of(context).size.width)*0.6,
+            child: Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      DetailRow(job, user),
+                      Expanded(
+                        child: Container(
+                          height: double.infinity,
+                          padding: EdgeInsets.all(20),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(topRight: Radius.circular(20),bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20)),
                           ),
+                          child: FirstDetail(context,job,false,user),
                         ),
-                      ],
-                    ),),
-                  SizedBox(width: 20,),
-                  Flexible(
-                    flex: 1,
-                    child: Container(
-                      padding: EdgeInsets.all(20),
+                      ),
+                    ],
+                  ),),
+                SizedBox(width: 20,),
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    padding: EdgeInsets.all(20),
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
                     child: SecondDetail(context,job,false,user),
                   ),)
-                ],
-              )
-          ),
+              ],
+            )
+        ),
       ),
     );
   }
-  /*
-  Column(
-                children: [
-                  Row(mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Container(
-                        color: Color(0xff50C7E1),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10))
-                        ),
-                        child: Text(job.currentJob.data.customerName),
-                      ),
-                      Icon(Icons.phone,color: Color(0xff50C7E1),),
-                      Text(job.currentJob.data.customerPhone)
-                    ],
-                  ),
-                  Switch(value: _isDetail, onChanged: (value)=>setState(()=>_isDetail=value)),
-                  _isDetail?FirstDetail(context, job):SecondDetail(context, job),
-                ],
-              )
-   */
+  Widget MemoTile(JobProvider job, UserProvider user)=>ListView.builder(
+    shrinkWrap: true,
+    itemCount: job.memoList.data!.length,
+    itemBuilder: (context, index) {
+      return Container(
+        margin: const EdgeInsets.symmetric(
+          horizontal: 12.0,
+          vertical: 4.0,
+        ),
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 2,
+            color: Color(0xff50C7E1),
+          ),
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: ListTile(
+            title: Text('${job.memoList.data![index].content}'),
+            subtitle: Text('${job.memoList.data![index].createdAt.toString().substring(0,19)}'),
+            trailing: Text('${job.memoList.data![index].writerName}',style: TextStyle(color: user.uuid==job.memoList.data![index].writerUuid?Color(0xff50C7E1):Colors.black),),
+            onTap: user.uuid==job.memoList.data![index].writerUuid?() async {
+              var _isTrue = await MemoModify(user, job, index);
+              if(_isTrue=='delete') job.memoList.data!.removeAt(index);
+              if(_isTrue=='modify'||_isTrue=='delete') setState(() {});
+            }:null
+        ),
+      );
+    },
+  );
+  Widget DetailRow(JobProvider job,UserProvider user)=>Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+      Container(
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Color(0xff50C7E1),
+          borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)),
+        ),
+        child: Text(job.currentJob.customerName,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+      ),
+      SizedBox(width: 10,),
+      Icon(Icons.phone),
+      Text(job.currentJob.customerPhone),
+    ],
+  );
   Widget FirstDetail(BuildContext context, JobProvider job,bool isVertical,UserProvider user)=>Column(
     mainAxisSize: isVertical? MainAxisSize.min:MainAxisSize.max,
     mainAxisAlignment: isVertical? MainAxisAlignment.start:MainAxisAlignment.spaceAround,
@@ -290,37 +321,8 @@ class _JobDetailState extends State<JobDetail> {
             debugPrint('switched to: $index');
           },
         ),
-        Expanded(
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: job.memoList.data!.length,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 12.0,
-                  vertical: 4.0,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 2,
-                    color: Color(0xff50C7E1),
-                  ),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: ListTile(
-                  title: Text('${job.memoList.data![index].content}'),
-                  subtitle: Text('${job.memoList.data![index].createdAt.toString().substring(0,19)}'),
-                  trailing: Text('${job.memoList.data![index].writerName}',style: TextStyle(color: user.uuid==job.memoList.data![index].writerUuid?Color(0xff50C7E1):Colors.black),),
-                  onTap: user.uuid==job.memoList.data![index].writerUuid?() async {
-                    var _isTrue = await MemoModify(user, job, index);
-                    if(_isTrue=='delete') job.memoList.data!.removeAt(index);
-                    if(_isTrue=='modify'||_isTrue=='delete') setState(() {});
-                  }:null
-                ),
-              );
-            },
-          ),
-        ),
+        isVertical?Container(height: MediaQuery.of(context).size.height*0.6,child: MemoTile(job, user),
+        ):Expanded(child: MemoTile(job, user)),
         Row(
           children: [
             Expanded(

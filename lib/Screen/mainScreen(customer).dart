@@ -160,7 +160,7 @@ class _MainScreen_CustomerState extends State<MainScreen_Customer> {
               child: Text('공지가 없습니다.'))),
           columns: const [
             DataColumn2(label: Text(''),size: ColumnSize.L),
-            DataColumn2(label: Text(''),numeric: true,size: ColumnSize.S)
+            DataColumn2(label: Text(''),numeric: true)
           ],
           autoRowsToHeight: true,
           controller: _controller,

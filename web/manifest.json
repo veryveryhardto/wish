@@ -1,11 +1,11 @@
 {
-    "name": "wish",
-    "short_name": "wish",
+    "name": "위시클린",
+    "short_name": "위시",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "위시클린의 홈페이지입니다.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
